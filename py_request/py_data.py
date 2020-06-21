@@ -61,6 +61,7 @@ class gameData:
         self.sAwayGroun = []        #客场
         self.fDataMap1 = []         #初盘 终盘 前数据
         self.fDataMap2 = []         #初盘 终盘 后数据
+        self.sGameResult = []       #胜负结果
         #self.fDataMain1 = {'皇冠':[], '澳门':[], 'Bet365':[], '易胜博':[], '12Bet':[]}   #主
         #self.fDataTap = {'皇冠':[], '澳门':[], 'Bet365':[], '易胜博':[], '12Bet':[]}  #盘口
         #self.fDataGuest1 = {'皇冠':[], '澳门':[], 'Bet365':[], '易胜博':[], '12Bet':[]}   #客
@@ -120,6 +121,15 @@ class gameData:
         except Exception, e:
             logE(str(e) + 'sAwayGroun = ' + sNodeList[7])
             self.sGameHomeField.append(sNodeList[7])
+
+        if int(sNodeList[12]) < 0:
+            sTmpData = '负'
+        elif int(sNodeList[12]) > 0:
+            sTmpData = '胜'
+        else:
+            sTmpData = '平'
+
+        self.sGameResult.append(sTmpData)
         #print("ddd " + sNodeList[15])
         dicData1 = {}
         dicData1["澳门"] = self.decodeListToDic(sNodeList[15], 1)

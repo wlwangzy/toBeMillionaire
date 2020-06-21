@@ -154,10 +154,10 @@ def writeHistoryGameHeader(sheet, iStartLine, iStartColum):
     iStartColum += 1
     sheet.write(iStartLine, iStartColum, '胜负')
     iStartColum += 1
-    sheet.write(iStartLine, iStartColum, '让球')
-    iStartColum += 1
-    sheet.write(iStartLine, iStartColum, '大小')
-    iStartColum += 1
+    #sheet.write(iStartLine, iStartColum, '让球')
+    #iStartColum += 1
+    #sheet.write(iStartLine, iStartColum, '大小')
+    #iStartColum += 1
 
 def writeGameBodyDataNode(sheet, iStartLine, iStartColum, mapData, sPos):
     #data
@@ -185,7 +185,7 @@ def writeGameBody(sheet, iStartLine, iStartColum, classGameData, i):
     iStartColum += 1
     sheet.write(iStartLine, iStartColum, classGameData.sAwayGroun[i])
     iStartColum += 1
-
+    sheet.write(iStartLine, iStartColum + 8, classGameData.sGameResult[i])
     #data
     writeGameBodyDataNode(sheet, iStartLine, iStartColum, classGameData.fDataMap1[i], '澳门')
     writeGameBodyDataNode(sheet, iStartLine, iStartColum + 4, classGameData.fDataMap2[i], '澳门')
@@ -240,10 +240,10 @@ def writeInGameData1Header(sheet, iStartLine, iStartColum):
     iStartColum += 1
     sheet.write(iStartLine, iStartColum, '胜负')
     iStartColum += 1
-    sheet.write(iStartLine, iStartColum, '让球')
-    iStartColum += 1
-    sheet.write(iStartLine, iStartColum, '大小')
-    iStartColum += 1
+    #sheet.write(iStartLine, iStartColum, '让球')
+    #iStartColum += 1
+    #sheet.write(iStartLine, iStartColum, '大小')
+    #iStartColum += 1
 
 def writeInGameData1(sheet, iStartLine, iStartColum, classInGameData1):
     #classHistroyGameData.outputData()
