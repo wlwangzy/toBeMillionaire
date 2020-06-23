@@ -9,6 +9,9 @@ def logPrint(logLevel, logStr):
     print(now_time + ' ' +logLevel + ' ' + logStr)
     
 
+def logW(logStr):
+    logPrint('WARN :', logStr)
+
 def logE(logStr):
     logPrint('ERROR:', logStr)
 

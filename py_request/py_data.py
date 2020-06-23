@@ -111,7 +111,7 @@ class gameData:
             else:
                 self.sGameHomeField.append(sNodeLists[-2].split('>')[1])
         except Exception, e:
-            logE(str(e) + 'sAwayGroun = ' + sNodeList[5])
+            logW(str(e) + 'sAwayGroun = ' + sNodeList[5])
             self.sGameHomeField.append(sNodeList[5])
         
         self.sCore.append(sNodeList[8] + '-' + sNodeList[9] + '(' + sNodeList[10].split('\'')[1] + ')')
@@ -119,8 +119,8 @@ class gameData:
         try:
             self.sAwayGroun.append(sNodeList[7].split('>')[1].split('<')[0])
         except Exception, e:
-            logE(str(e) + 'sAwayGroun = ' + sNodeList[7])
-            self.sGameHomeField.append(sNodeList[7])
+            logW(str(e) + 'sAwayGroun = ' + sNodeList[7])
+            self.sAwayGroun.append(sNodeList[7])
 
         if int(sNodeList[12]) < 0:
             sTmpData = '负'
@@ -128,7 +128,6 @@ class gameData:
             sTmpData = '胜'
         else:
             sTmpData = '平'
-
         self.sGameResult.append(sTmpData)
         #print("ddd " + sNodeList[15])
         dicData1 = {}
