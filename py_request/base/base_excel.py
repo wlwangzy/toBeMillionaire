@@ -305,7 +305,7 @@ def writeAllGameHeader(sheet, iStartLine, iStartColum):
     #sheet.write(iStartLine, iStartColum, '大小')
     #iStartColum += 1
 
-def writeAllGameBodyDataNode(sheet, iStartLine, iStartColum, mapData, sPos, gameDataDic):
+def writeAllGameBodyDataNode(sheet, iStartLine, iStartColum, mapData, sPos):
     #data
     sheet.write(iStartLine, iStartColum, sPos + ' 初盘')
     sheet.write(iStartLine + 1, iStartColum, sPos + ' 终盘')
@@ -320,8 +320,8 @@ def writeAllGameBodyDataNode(sheet, iStartLine, iStartColum, mapData, sPos, game
     sheet.write(iStartLine, iStartColum + 2, mapData[sPos]['start'][2])
     sheet.write(iStartLine + 1, iStartColum + 2, mapData[sPos]['end'][2])
 
-    gameDataDic1 = addWebGameDicNode(gameDataDic, sPos + ' 初盘', mapData[sPos]['start'][1], mapData[sPos]['start'][0], mapData[sPos]['start'][2])
-    gameDataDic2 = addWebGameDicNode(gameDataDic, sPos + ' 终盘', mapData[sPos]['end'][1], mapData[sPos]['end'][0], mapData[sPos]['end'][2])
+    gameDataDic1 = addWebGameDicNode(sPos + ' 初盘', mapData[sPos]['start'][1], mapData[sPos]['start'][0], mapData[sPos]['start'][2])
+    gameDataDic2 = addWebGameDicNode(sPos + ' 终盘', mapData[sPos]['end'][1], mapData[sPos]['end'][0], mapData[sPos]['end'][2])
 
     return gameDataDic1, gameDataDic2
 
@@ -337,15 +337,16 @@ def createWebDic(sGameDate, sGameType, sGameHomeField, sAwayGroun, sCore, sGameR
 
     return gameDataDic
 
-def addWebGameDicNode(gameDataDic, sDataName, sPanData, sZhu, sKeData):
-    gameDataDicNode = gameDataDic
+def addWebGameDicNode(sDataName, sPanData, sZhu, sKeData):
+    #gameDataDicNode = gameDataDic
+    gameDataDicNode = {}
     gameDataDicNode["sDataName"] = sDataName
     gameDataDicNode["sPanAll"] = sPanData
     gameDataDicNode["sZhuData"] = sZhu
     gameDataDicNode["sPan"] = sPanData
-    gameDataDic["sKeData"] = sKeData
+    gameDataDicNode["sKeData"] = sKeData
 
-    return gameDataDic
+    return gameDataDicNode
 
 
 def writeAllGameBody(sheet, iStartLine, iStartColum, classGameData, i, gameDataList):
@@ -367,12 +368,17 @@ def writeAllGameBody(sheet, iStartLine, iStartColum, classGameData, i, gameDataL
 
     gameDataDic = createWebDic(classGameData.sGameDate[i], classGameData.sGameType[i], classGameData.sGameHomeField[i],
                                             classGameData.sAwayGroun[i], classGameData.sCore[i], classGameData.sGameResult[i])
+    gameDataDicNone = createWebDic("", "", "", "", "", "")
     #data
-    gameDataDic1, gameDataDic2 = writeAllGameBodyDataNode(sheet, iStartLine, iStartColum, classGameData.fDataMap1[i], '澳门', gameDataDic)
+    gameDataDic1, gameDataDic2 = writeAllGameBodyDataNode(sheet, iStartLine, iStartColum, classGameData.fDataMap1[i], '澳门')
+    gameDataDic1 = dict(gameDataDic1, **gameDataDic)
+    gameDataDic2 = dict(gameDataDic2, **gameDataDicNone)
     gameDataList.append(gameDataDic1)
     gameDataList.append(gameDataDic2)
     iStartLine += 2
-    gameDataDic1, gameDataDic2  = writeAllGameBodyDataNode(sheet, iStartLine, iStartColum, classGameData.fDataMap1[i], '皇冠', gameDataDic)
+    gameDataDic1, gameDataDic2  = writeAllGameBodyDataNode(sheet, iStartLine, iStartColum, classGameData.fDataMap1[i], '皇冠')
+    gameDataDic1 = dict(gameDataDic1, **gameDataDicNone)
+    gameDataDic2 = dict(gameDataDic2, **gameDataDicNone)
     gameDataList.append(gameDataDic1)
     gameDataList.append(gameDataDic2)
     iStartLine += 2
@@ -398,8 +404,8 @@ def updateExcelData(outPathFile, jsonDic):
     iStartLine = 2
     iStartColum = 6
     for node in jsonDic:
-        print node
-        print node["qdsa"]
+        #print node
+        #print node["qdsa"]
         wSheet.write(iStartLine, iStartColum, node["qdsa"])
         iStartLine += 1
 

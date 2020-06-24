@@ -52,7 +52,7 @@ def toGetRquest(sUrl):
 
     basedir = os.path.abspath(os.path.dirname(__file__))
 
-    outPutdir = basedir + "/output/" + datetime.datetime.now().strftime('%Y-%m-%d')
+    outPutdir = basedir + "/web/output/" + datetime.datetime.now().strftime('%Y-%m-%d')
     if not os.path.exists(outPutdir):
         os.makedirs(outPutdir)
     outPutFile = outPutdir + "/" + requestId + ".xls"
@@ -85,4 +85,26 @@ def toGetRquest(sUrl):
     return True, dicData
 
 if __name__ == "__main__":
-    toGetRquest("http://zq.win007.com/analysis/1743046sb.htm#porlet_0")
+    #toGetRquest("http://zq.win007.com/analysis/1743046sb.htm#porlet_0")
+    sUrl = "http://zq.win007.com/analysis/1743046sb.htm#porlet_0"
+
+    requestId, errorData = decodeUrl(sUrl) 
+
+    basedir = os.path.abspath(os.path.dirname(__file__))
+
+    outPutdir = basedir + "/web/output/" + datetime.datetime.now().strftime('%Y-%m-%d')
+    if not os.path.exists(outPutdir):
+        os.makedirs(outPutdir)
+    outPutFile = outPutdir + "/" + requestId + ".xls"
+     
+    logI("write to file path : " + outPutFile)
+
+    iTime = 0
+    allGameData = {}
+    
+    allGameData = requstUrl(requestId, outPutFile)
+
+    
+    dicData = {}
+    dicData["outPutFile"] = datetime.datetime.now().strftime('%Y-%m-%d') + "/" + requestId + ".xls"
+    dicData["allGameData"] = allGameData

@@ -14,11 +14,11 @@
         placeholder="请输入内容"
         v-model="sURLInput"
         size="medium"
-        style="width: 200px;"
+        style="width: 500px;"
         clearable
       >
       </el-input>
-      <el-button @click="getUrlData">获取数据</el-button>
+      <el-button type="primary" @click="getUrlData">获取数据</el-button>
 
       <el-table
         :data="dataRespons"
@@ -46,7 +46,7 @@
         <el-table-column prop="sPan" label="盘口"> </el-table-column>
         <el-table-column prop="sKeData" label="客"> </el-table-column>
       </el-table>
-      <el-button @click="downlodExcel">上传数据并保存excel</el-button>
+      <el-button type="primary" @click="downlodExcel">上传数据并保存excel</el-button>
     </div>
   </body>
   <!-- import Vue before Element -->
@@ -55,6 +55,7 @@
   <script src="./vue/element-ui/lib/index.js"></script>
   <script src="./vue/js/axios.min.js"></script>
   <script>
+    var g_Url = "http://103.195.7.35:8080"
     new Vue({
       el: "#app",
       data: function () {
@@ -70,7 +71,7 @@
           console.log(this.sURLInput);
           //this.$message('这是一条消息提示');
           axios
-            .get("http://127.0.0.1:8080/getUrlData", {
+            .get(g_Url + "/getUrlData", {
               params: {
                 sUrl: this.sURLInput,
               },
@@ -95,7 +96,7 @@
         downlodExcel() {
           tmp = JSON.stringify(this.dataRespons);
           axios
-            .get("http://127.0.0.1:8080/downLoadExcel", {
+            .get(g_Url + "/downLoadExcel", {
               params: {
                 sData: tmp,
                 outPutFile: this.outPutFile,
@@ -104,7 +105,8 @@
             .then((res) => {
               console.log(res.data);
               if(res.data.status == true){
-                window.location.href="http://www.baidu.com" 
+                window.location.href="http://rq.xhxhong.com" + res.data.data
+                //console.log(g_Url + res.data.data)
               }
             })
             .catch(function (error) {
