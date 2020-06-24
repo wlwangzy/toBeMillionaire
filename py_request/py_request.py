@@ -2,11 +2,11 @@
 import requests
 import sys
 from py_data import *
+from INCLUDE import *
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-if __name__ == "__main__":
-    requestId = '1761764'
+def requstUrl(requestId, outPathFile):
     requestUrl = 'http://zq.win007.com/analysis/' + requestId + 'sb.htm#porlet_0'
     header = {'User-Agent':'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36'}
     html = requests.get(requestUrl, headers = header)
@@ -25,6 +25,64 @@ if __name__ == "__main__":
     #print html.text
     classIndexData = praseHtmlIndexData(html.text)
     
-    writeExcelData(classHistroyGameData, classInGameData1, classInGameData2, classIndexData, classIntegralData)
+    allGameData = writeExcelData(outPathFile, classHistroyGameData, classInGameData1, classInGameData2, classIndexData, classIntegralData)
 
-    logI("get url success")
+    logI("write excel success")
+
+    return allGameData
+
+def decodeUrl(sUrl):
+    sUrls = sUrl.split("sb")
+    strLogE = "the url is error: " + sUrl
+    if len(sUrls) is 1:
+        return False, strLogE
+    sUrlss = sUrls[0].split("/")
+
+    if len(sUrlss) is 1:
+        return False, strLogE
+
+    logI("url is %s " % sUrlss[-1])
+
+    return sUrlss[-1], ""
+
+def toGetRquest(sUrl):
+    requestId, errorData = decodeUrl(sUrl) 
+    if requestId is False:
+        return False, errorData
+
+    basedir = os.path.abspath(os.path.dirname(__file__))
+
+    outPutdir = basedir + "/output/" + datetime.datetime.now().strftime('%Y-%m-%d')
+    if not os.path.exists(outPutdir):
+        os.makedirs(outPutdir)
+    outPutFile = outPutdir + "/" + requestId + ".xls"
+     
+    logI("write to file path : " + outPutFile)
+
+    iTime = 0
+    allGameData = {}
+    try:
+        allGameData = requstUrl(requestId, outPutFile)
+    except Exception, e:
+        logW(str(e))
+        while iTime < 5:
+            try:
+                allGameData = requstUrl(requestId, outPutFile)
+            except Exception, e:
+                logW(str(e))
+            else:
+                break
+            finally:
+                iTime += 1
+
+    if iTime == 3:
+        return False, "request timeout"
+    
+    dicData = {}
+    dicData["outPutFile"] = datetime.datetime.now().strftime('%Y-%m-%d') + "/" + requestId + ".xls"
+    dicData["allGameData"] = allGameData
+    #print allGameData
+    return True, dicData
+
+if __name__ == "__main__":
+    toGetRquest("http://zq.win007.com/analysis/1743046sb.htm#porlet_0")
