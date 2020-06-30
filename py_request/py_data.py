@@ -110,7 +110,7 @@ class gameData:
                 self.sGameHomeField.append(sNodeLists[-2])
             else:
                 self.sGameHomeField.append(sNodeLists[-2].split('>')[1])
-        except Exception, e:
+        except Exception as e:
             logD(str(e) + 'sAwayGroun = ' + sNodeList[5])
             self.sGameHomeField.append(sNodeList[5])
         
@@ -118,7 +118,7 @@ class gameData:
         self.sCorner.append(sNodeList[16].split('\'')[1] + '-' + sNodeList[17].split('\'')[1])
         try:
             self.sAwayGroun.append(sNodeList[7].split('>')[1].split('<')[0])
-        except Exception, e:
+        except Exception as e:
             logD(str(e) + 'sAwayGroun = ' + sNodeList[7])
             self.sAwayGroun.append(sNodeList[7])
 
@@ -153,22 +153,23 @@ class gameData:
         pass
 
     def outputData(self):
-        i = 0
-        while i < self.iCount:
-            print "==============="
-            print self.sGameType[i]
-            print self.sGameDate[i]
-            print self.sGameHomeField[i]
-            print self.sCore[i]
-            print self.sCorner[i]
-            print self.sAwayGroun[i]
-            print "data :"
-            print self.fDataMap1
-            print self.fDataMap2
-            print "================"
-            i += 1
-        print self.iCount
-        print i
+        pass
+        # i = 0
+        # while i < self.iCount:
+        #     print "==============="
+        #     print self.sGameType[i]
+        #     print self.sGameDate[i]
+        #     print self.sGameHomeField[i]
+        #     print self.sCore[i]
+        #     print self.sCorner[i]
+        #     print self.sAwayGroun[i]
+        #     print "data :"
+        #     print self.fDataMap1
+        #     print self.fDataMap2
+        #     print "================"
+        #     i += 1
+        # print self.iCount
+        # print i
 
 #即时指数数据
 class indexData:
@@ -193,8 +194,8 @@ class indexData:
         
     def outputData(self):
         for node in self.indexDataList:
-            print node
-        print "index number = " + str(len(self.indexDataList))
+            print(node)
+        print("index number = " + str(len(self.indexDataList)))
 
 #联赛积分排名
 class integralData:
@@ -228,8 +229,64 @@ class integralData:
             i += 1
     
     def outputData(self):
-        print self.integralDataList
+        print(self.integralDataList)
 
+class nowTimeData:
+    def __init__(self):
+        self.nowData = []
+        self.nowDataAll = []
+
+    def decodeNowTimeData(self, listNowData, listNowDataAll):
+        i = 0
+        while (i < len(listNowData) - 2 and "FONT" not in listNowData[i]):
+            tmpDic = {}
+            tmpDic["iTime"] = listNowData[i]
+            tmpDic["sPan"] = listNowData[i + 1]
+            tmpDic["iData"] = listNowData[i + 2].split("&nbsp;")[-1]
+
+            if "<" in tmpDic["iData"]:
+                tmpDic["iData"] = tmpDic["iData"].split("<")[0]
+
+            self.nowData.append(tmpDic)
+            i += 3
+
+        
+        for node in listNowDataAll:
+            findTmp2= '>(.*?)</TD>'
+            tmpData = re.findall(findTmp2, node, re.S)
+            # print tmpData
+            tmpData = self.praseData(tmpData)
+            self.nowDataAll.append(tmpData)
+    
+    def praseData(self, sData):
+        i = 0
+        while i < len(sData):
+            findTmp= '>(.*?)<'
+            tmpData = re.findall(findTmp, sData[i], re.S)
+            if len(tmpData) != 0:
+                for node in tmpData:
+                    if node != '':
+                        sData[i] = node
+                        break
+            else:
+                if "FONT" in sData[i]:
+                    sData[i] = sData[i].split('>')[-1]
+
+            i += 1
+
+
+        return sData
+
+    def outputData(self):
+        #print "nowData"
+        for node in self.nowData:
+            print(node)
+
+        #print "nowData All"
+        for node in self.nowDataAll:
+            print(node)
+
+        
 def praseData(sStr):
     sStrList = sStr.split('],[')
     #print(len(sStrList))
@@ -294,9 +351,9 @@ def praseHtmlGameTableData(sHtmlData):
 
 #解析即时指数
 def praseHtmlIndexData(sHtmlData):
-    findIndexNow = '<input type=\'hidden\' value=\'(.*?)\''
+    findTmp = '<input type=\'hidden\' value=\'(.*?)\''
     
-    tmpData = re.findall(findIndexNow, sHtmlData , re.S)
+    tmpData = re.findall(findTmp, sHtmlData , re.S)
     nowIndexData = tmpData[0]
 
     classIndexData = indexData()
@@ -308,8 +365,8 @@ def praseHtmlIndexData(sHtmlData):
 def praseHtmlIntegralData(sHtmlData):
     #print sHtmlData
 
-    findIIntegral= '<tr align=middle bgcolor=.*?>(.*?)</tr>'
-    tmpData = re.findall(findIIntegral, sHtmlData, re.S)
+    findTmp= '<tr align=middle bgcolor=x>(.*?)</tr>'
+    tmpData = re.findall(findTmp, sHtmlData, re.S)
     
     #for node in tmpData:
     #    print node
@@ -321,6 +378,20 @@ def praseHtmlIntegralData(sHtmlData):
 
     return classIntegralData
 
+#解析实时数据
+def praseHtmlNowData(sHtmlData):
+    findTmp= '<TD.*?>(.*?)</TD>'
+    tmpData = re.findall(findTmp, sHtmlData, re.S)
+
+    findTmp2= '<TR align=center.*?>(.*?)</TR>'
+    tmpData2= re.findall(findTmp2, sHtmlData, re.S)
+    #for node in tmpData:
+     #   print node
+
+
+    classNowData = nowTimeData()
+    classNowData.decodeNowTimeData(tmpData, tmpData2)
+    #classNowData.outputData()
 
 if __name__ == "__main__":
     #test source data http://zq.win007.com/analysis/1743046sb.htm

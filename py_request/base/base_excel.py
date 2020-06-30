@@ -412,9 +412,16 @@ def updateExcelData(outPathFile, jsonDic):
     wBook.save(outPathFile)
 
 def writeExcelData(outPathFile, classHistroyGameData = None, classInGameData1 = None, classInGameData2 = None, classIndexData = None, classIntegralData = None):
-    book, sheet, sheet2 = createExcel()
+    book, sheet, sheet2, sheet3 = createExcel()
     iStartLine = 0
     iStartColum = 0
+
+    #写入总结数据
+    #写入即时数据
+    iStartLine = 0
+    iStartLine, gameDataList = writeAllGameData(sheet, iStartLine, iStartColum, classHistroyGameData)
+    #for node in gameDataList:
+    #    print node
 
     #写入联赛积分排名数据
     iStartLine = writeIntegralExcel(sheet2, iStartLine, iStartColum, classIntegralData)
@@ -423,11 +430,6 @@ def writeExcelData(outPathFile, classHistroyGameData = None, classInGameData1 = 
     iStartLine = writeInGameData1(sheet2, iStartLine + 10, iStartColum, classInGameData1)
     iStartLine = writeInGameData2(sheet2, iStartLine + 10, iStartColum, classInGameData2)
 
-    #写入总结数据
-    iStartLine = 0
-    iStartLine, gameDataList = writeAllGameData(sheet, iStartLine, iStartColum, classHistroyGameData)
-    #for node in gameDataList:
-    #    print node
 
     book.save(outPathFile)
 

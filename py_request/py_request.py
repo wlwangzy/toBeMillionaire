@@ -3,8 +3,9 @@ import requests
 import sys
 from py_data import *
 from INCLUDE import *
-reload(sys)
-sys.setdefaultencoding('utf8')
+if sys.version_info.major == 2:
+    reload(sys)
+    sys.setdefaultencoding('utf8')
 
 def requstUrl(requestId, outPathFile):
     requestUrl = 'http://zq.win007.com/analysis/' + requestId + 'sb.htm#porlet_0'
@@ -63,12 +64,12 @@ def toGetRquest(sUrl):
     allGameData = {}
     try:
         allGameData = requstUrl(requestId, outPutFile)
-    except Exception, e:
+    except Exception as e:
         logW(str(e))
         while iTime < 5:
             try:
                 allGameData = requstUrl(requestId, outPutFile)
-            except Exception, e:
+            except Exception as e:
                 logW(str(e))
             else:
                 break
@@ -84,6 +85,8 @@ def toGetRquest(sUrl):
     #print allGameData
     return True, dicData
 
+
+
 if __name__ == "__main__":
     #toGetRquest("http://zq.win007.com/analysis/1743046sb.htm#porlet_0")
     sUrl = "http://zq.win007.com/analysis/1743046sb.htm#porlet_0"
@@ -98,13 +101,17 @@ if __name__ == "__main__":
     outPutFile = outPutdir + "/" + requestId + ".xls"
      
     logI("write to file path : " + outPutFile)
-
-    iTime = 0
-    allGameData = {}
     
-    allGameData = requstUrl(requestId, outPutFile)
-
+    #allGameData = requstUrl(requestId, outPutFile)
     
-    dicData = {}
-    dicData["outPutFile"] = datetime.datetime.now().strftime('%Y-%m-%d') + "/" + requestId + ".xls"
-    dicData["allGameData"] = allGameData
+
+    requestUrl2 = 'http://vip.win007.com/changeDetail/handicap.aspx?id=1868527&companyid=1&l=0'
+
+    header2 = {'User-Agent':'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36',
+                'Referer':'http://zq.win007.com/analysis/' + requestId + 'sb.htm'}
+    html = requests.get(requestUrl2, headers = header2)
+    html.encoding = 'utf-8'
+
+    #print html.text
+
+    praseHtmlNowData(html.text)
