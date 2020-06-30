@@ -21,7 +21,7 @@ def requstUrl(requestId, outPathFile):
     header2 = {'User-Agent':'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36',
                 'Referer':'http://zq.win007.com/analysis/' + requestId + 'sb.htm'}
     html = requests.get(requestUrl2, headers = header2)
-    html.encoding = 'utf-8'
+    html.encoding = 'gb2312'
 
     #print html.text
     classIndexData = praseHtmlIndexData(html.text)
@@ -110,7 +110,7 @@ if __name__ == "__main__":
     header2 = {'User-Agent':'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36',
                 'Referer':'http://zq.win007.com/analysis/' + requestId + 'sb.htm'}
     html = requests.get(requestUrl2, headers = header2)
-    html.encoding = 'utf-8'
+    html.encoding = 'gb2312'
 
     #print html.text
 
