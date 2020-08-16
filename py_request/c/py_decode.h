@@ -37,7 +37,7 @@ typedef struct
 
     ZINT iQdsa ; // qdsa让球数据
 
-    ZINT    iInitialHandicapX; // 即时指数让球初盘（澳门）
+    ZFLOAT  fInitialHandicapX; // 即时指数让球初盘（澳门）
     ZFLOAT  fInitialHandicapOver; // 即时指数让球初盘上盘赔率（澳门）
     ZFLOAT  fInitialHandicapUnder; // 即时指数让球初盘下盘赔率（澳门）
     ZFLOAT  fInstantHandicapX; // 即时指数让球实时盘（澳门） 最后一次赔率变化
@@ -45,7 +45,7 @@ typedef struct
     ZFLOAT  fInstantHandicapUnder; // 即时指数让球实时盘下盘赔率（澳门）
     HCLST   *pstHandicapList;  // 亚赔变化表 （只需澳门）
 
-    ZINT    iInitialHandicapX_crown; // 即时指数让球初盘（皇冠）
+    ZFLOAT  fInitialHandicapX_crown; // 即时指数让球初盘（皇冠）
     ZFLOAT  fInitialHandicapOver_crown; // 即时指数让球初盘上盘赔率（皇冠）
     ZFLOAT  fInitialHandicapUnder_crown; // 即时指数让球初盘下盘赔率（皇冠）
     ZFLOAT  fInstantHandicapX_crown; // 即时指数让球实时盘（皇冠） 最后一次赔率变化
@@ -72,7 +72,7 @@ const char *cJsonLst[] =
 
     "iQdsa",
 
-    "iInitialHandicapX",
+    "fInitialHandicapX",
     "fInitialHandicapOver",
     "fInitialHandicapUnder",
     "fInstantHandicapX",
@@ -80,7 +80,7 @@ const char *cJsonLst[] =
     "fInstantHandicapUnder",
     "pstHandicapList",
 
-    "iInitialHandicapX_crown",
+    "fInitialHandicapX_crown",
     "fInitialHandicapOver_crown",
     "fInitialHandicapUnder_crown",
     "fInstantHandicapX_crown",
