@@ -25,11 +25,17 @@ typedef struct
     ZINT iHomeRecentWin; // 主队近期战绩胜场次
     ZINT iHomeRecentDraws; // 主队近期战绩平场次
     ZINT iHomeRecentLose; // 主队近期战绩负场次
+    ZINT iHomeRecentHomeWin; // 主队近期战绩主场胜场次
+    ZINT iHomeRecentHomeDraws; // 主队近期战绩主场平场次
+    ZINT iHomeRecentHomeLose; // 主队近期战绩主场负场次
 
     ZINT iAwayRank;    // 客队排名
     ZINT iAwayRecentWin; // 客队近期战绩胜场次
     ZINT iAwayRecentDraws; // 客队近期战绩平场次
     ZINT iAwayRecentLose; // 客队近期战绩负场次
+    ZINT iAwayRecentAwayWin; // 客队近期战绩客场胜场次
+    ZINT iAwayRecentAwayDraws; // 客队近期战绩客场平场次
+    ZINT iAwayRecentAwayLose; // 客队近期战绩客场负场次
 
     ZINT iVsRecHomeWin; // 对赛往绩主队胜场次
     ZINT iVsRecHomeDraws; // 对赛往绩主队平场次
