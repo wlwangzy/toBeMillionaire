@@ -9,9 +9,42 @@ typedef enum
 
 typedef enum
 {
-	LOWER,
-	UPPER
+	LOWER_S,  //低开两级及以上
+	LOWER,	  //低开一级
+	EQUAL,    //平开
+	UPPER,    //高开
+	UPPER_S   //高开两级及以上
 }HANDI_QDSA;
+
+typedef enum
+{
+	LOW_ODDS,  		//低水 <0.82
+	LOW_MID_ODDS,	//中低水 0.82-0.88
+	MID_ODDS,    	//中水 0.88-0.92
+	MID_HIGH_ODDS,  //中高水 0.92-0.98
+	HIGH_ODDS   	//高水 >0.98
+}ODDS_LEVEL;
+
+// 以baseHandicap为基准，判断盘口较baseHandicap的高开低开等级
+int AbsLEVEL(ZFLOAT compareHandicap, ZFLOAT baseHandicap)
+{
+	int level,absLevel;
+	level = fabs(compareHandicap - baseHandicap)/0.25;
+	if ((fabs(a) > fabs(b)) && (level == 1))
+		absLevel = UPPER;
+	else if ((fabs(a) > fabs(b)) && (level > 1))
+		absLevel = UPPER_S;
+	else if ((fabs(a) < fabs(b)) && (level == 1))
+		absLevel = LOWER;
+	else if ((fabs(a) < fabs(b)) && (level > 1))
+		absLevel = LOWER_S;
+	else
+	{
+		absLevel = EQUAL;
+	}
+	
+	return absLevel;
+}
 
 ZFLOAT qdsaToHandicap(ZINT qdsa)
 {
@@ -138,6 +171,16 @@ int pyDataCal(AnalysParam *pstDecodeData)
 	}
 	printf("1.3 homeScore %d awayScore %d\n",homeScore,awayScore)
 //# 1.4 在近期战绩的基础上，查看主队主场战绩，客队客场战绩。胜+平多的一方为优势方。优势方得3分
+	if (pstDecodeData->iHomeRecentHomeWin + pstDecodeData->iHomeRecentHomeDraws > 
+		pstDecodeData->iAwayRecentAwayWin + pstDecodeData->iAwayRecentAwayDraws)
+	{
+		homeScore += 3;
+	}
+	else if (pstDecodeData->iHomeRecentWin + pstDecodeData->iHomeRecentDraws < 
+		pstDecodeData->iAwayRecentWin + pstDecodeData->iAwayRecentDraws)
+	{
+		awayScore += 3;
+	}
 //# 1.5 综合两队优势得分，分高的为主观优势方。资金对优势方会有偏爱。若得分一致，主队为优势方
 	if (homeScore >= awayScore)
 	{
@@ -162,23 +205,17 @@ int pyDataCal(AnalysParam *pstDecodeData)
 		return -1;
 	}
 
-	// 判断让球方是否高开
-	if (fabs(pstDecodeData->fInitialHandicapX) > fabs(qdsaHandicap))
-	{
-		isHandicaUpperpQdsa	= UPPER;
-	}
-	else
-	{
-		isHandicaUpperpQdsa	= LOWER;
-	}	
+	// 判断让球方是否高开,几高开等级
+	isHandicaUpperpQdsa = AbsLEVEL(pstDecodeData->fInitialHandicapX, qdsaHandicap)
+
 	// 让球方是主队还是客队
-	if (pstDecodeData->fInitialHandicapX >= 0.0)
-	{
-s		trengthBetterTeam = HOME_TEAM;
-	}
-	else
+	if (pstDecodeData->fInitialHandicapX < 0.0)
 	{
 		trengthBetterTeam = AWAY_TEAM;
+	}
+	else
+	{
+		trengthBetterTeam = HOME_TEAM;
 	}
 
 //# 2.5 看是否满足以下模型：
@@ -191,14 +228,49 @@ s		trengthBetterTeam = HOME_TEAM;
 	if (trengthBetterTeam == HOME_TEAM) && (stateBetterTeam == AWAY_TEAM) 
 		&& (isHandicaUpperpQdsa == UPPER)
 	{
-		printf("高开阻上模型,主队让球且高开，主队赢盘\n");
+		printf("高开阻上模型,主队让球且高开\n");
+
+		if (AbsLEVEL(pstDecodeData->fInitialHandicapX, pstDecodeData->fInstantHandicapX) == EQUAL
+			&& (pstDecodeData->fInitialHandicapOver < 0.88) 
+			&& (pstDecodeData->fInstantHandicapOver < 0.88))
+		{
+			printf("二次确认,初盘终盘不变且均保持低水 主队赢盘 80%\n");
+		}
+		else if (AbsLEVEL(pstDecodeData->fInstantHandicapX, pstDecodeData->fInitialHandicapX) == LOWER
+			&& (pstDecodeData->fInitialHandicapOver > 0.95) 
+			&& (pstDecodeData->fInstantHandicapOver < 0.88))
+		{
+			printf("二次确认,初盘高水终盘降盘保持低水 主队赢盘 90%\n");
+		}
+		else
+		{
+			printf("初盘判断：主队赢盘 60% \n");
+		}
+		
 		return 0;
 	}
 
 	if (trengthBetterTeam == AWAY_TEAM) && (stateBetterTeam == HOME_TEAM) 
 		&& (isHandicaUpperpQdsa == UPPER)
 	{
-		printf("高开阻上模型,客队让球且高开，客队赢盘\n");
+		printf("高开阻上模型,客队让球且高开\n");
+		
+		if (AbsLEVEL(pstDecodeData->fInitialHandicapX, pstDecodeData->fInstantHandicapX) == EQUAL
+			&& (pstDecodeData->fInitialHandicapOver < 0.88) 
+			&& (pstDecodeData->fInstantHandicapOver < 0.88))
+		{
+			printf("二次确认,初盘终盘不变且均保持低水 客队赢盘 80%\n");
+		}
+		else if (AbsLEVEL(pstDecodeData->fInstantHandicapX, pstDecodeData->fInitialHandicapX) == LOWER
+			&& (pstDecodeData->fInitialHandicapOver > 0.95) 
+			&& (pstDecodeData->fInstantHandicapOver < 0.88))
+		{
+			printf("二次确认,初盘高水终盘降盘保持低水 客队赢盘 90%\n");
+		}
+		else
+		{
+			printf("初盘判断：客队赢盘 60% \n");
+		}
 		return 1;
 	}
 //# 2.5.2 浅开诱上模型（新手常用）
@@ -210,7 +282,24 @@ s		trengthBetterTeam = HOME_TEAM;
 	if (trengthBetterTeam == HOME_TEAM) && (stateBetterTeam == HOME_TEAM) && 
 		(isHandicaUpperpQdsa == LOWER)
 	{
-		printf("浅开诱上模型,主队让球且低开，客队赢盘\n");
+		printf("浅开诱上模型,主队让球且低开\n");
+		
+		if (AbsLEVEL(pstDecodeData->fInitialHandicapX, pstDecodeData->fInstantHandicapX) == EQUAL
+			&& (pstDecodeData->fInitialHandicapOver > 0.95) 
+			&& (pstDecodeData->fInstantHandicapOver > 0.95))
+		{
+			printf("二次确认,初盘终盘不变且均保持高水 客队赢盘 80%\n");
+		}
+		else if (AbsLEVEL(pstDecodeData->fInstantHandicapX, pstDecodeData->fInitialHandicapX) == UPPER
+			&& (pstDecodeData->fInitialHandicapOver < 0.88) 
+			&& (pstDecodeData->fInstantHandicapOver > 0.95))
+		{
+			printf("二次确认,初盘低水终盘升盘保持高水 客队赢盘 90%\n");
+		}
+		else
+		{
+			printf("初盘判断：客队赢盘 60% \n");
+		}
 		return 1;
 	}
 
@@ -218,6 +307,23 @@ s		trengthBetterTeam = HOME_TEAM;
 		&& (isHandicaUpperpQdsa == LOWER)
 	{
 		printf("浅开诱上模型,客队让球且低开，主队赢盘\n");
+		
+		if (AbsLEVEL(pstDecodeData->fInitialHandicapX, pstDecodeData->fInstantHandicapX) == EQUAL
+			&& (pstDecodeData->fInitialHandicapOver > 0.95) 
+			&& (pstDecodeData->fInstantHandicapOver > 0.95))
+		{
+			printf("二次确认,初盘终盘不变且均保持高水 主队赢盘 80%\n");
+		}
+		else if (AbsLEVEL(pstDecodeData->fInstantHandicapX, pstDecodeData->fInitialHandicapX) == UPPER
+			&& (pstDecodeData->fInitialHandicapOver < 0.88) 
+			&& (pstDecodeData->fInstantHandicapOver > 0.95))
+		{
+			printf("二次确认,初盘低水终盘升盘保持高水 主队赢盘 90%\n");
+		}
+		else
+		{
+			printf("初盘判断：主队赢盘 60% \n");
+		}
 		return 0;
 	}
 //# 2.5.3 高开诱上模型
@@ -227,16 +333,48 @@ s		trengthBetterTeam = HOME_TEAM;
 //#                 同时配合澳门盘口的走势，盘口高开，临场维持高水或者还继续升盘到高一级盘口高水。
 //#       结论：让球方输盘
 	if (trengthBetterTeam == HOME_TEAM) && (stateBetterTeam == HOME_TEAM) 
-		&& (isHandicaUpperpQdsa == UPPER)
+		&& (isHandicaUpperpQdsa == UPPER_S)
 	{
-		printf("高开诱上模型,主队让球且高开，客队赢盘\n");
+		printf("高开诱上模型,主队让球且高开\n");
+				
+		if (AbsLEVEL(pstDecodeData->fInitialHandicapX, pstDecodeData->fInstantHandicapX) == EQUAL
+			&& (pstDecodeData->fInitialHandicapOver > 0.95) 
+			&& (pstDecodeData->fInstantHandicapOver > 0.95))
+		{
+			printf("二次确认,初盘终盘不变且均保持高水 客队赢盘 80%\n");
+		}
+		else if (AbsLEVEL(pstDecodeData->fInstantHandicapX, pstDecodeData->fInitialHandicapX) == UPPER
+			&& (pstDecodeData->fInstantHandicapOver > 0.95))
+		{
+			printf("二次确认,无视初盘水位，终盘升盘保持高水 客队赢盘 90%\n");
+		}
+		else
+		{
+			printf("初盘判断，客队赢盘 60% \n");
+		}
 		return 1;
 	}
 
 	if (trengthBetterTeam == AWAY_TEAM) && (stateBetterTeam == AWAY_TEAM) 
-		&& (isHandicaUpperpQdsa == UPPER)
+		&& (isHandicaUpperpQdsa == UPPER_S)
 	{
 		printf("高开诱上模型,客队让球且高开，主队赢盘\n");
+		
+		if (AbsLEVEL(pstDecodeData->fInitialHandicapX, pstDecodeData->fInstantHandicapX) == EQUAL
+			&& (pstDecodeData->fInitialHandicapOver > 0.95) 
+			&& (pstDecodeData->fInstantHandicapOver > 0.95))
+		{
+			printf("二次确认,初盘终盘不变且均保持高水 主队赢盘 80%\n");
+		}
+		else if (AbsLEVEL(pstDecodeData->fInstantHandicapX, pstDecodeData->fInitialHandicapX) == UPPER
+			&& (pstDecodeData->fInstantHandicapOver > 0.95))
+		{
+			printf("二次确认,无视初盘水位，终盘升盘保持高水 主队赢盘 90%\n");
+		}
+		else
+		{
+			printf("初盘判断，主队赢盘 60% \n");
+		}
 		return 0;
 	}
 //# 2.5.4 浅开反诱上盘
@@ -247,16 +385,38 @@ s		trengthBetterTeam = HOME_TEAM;
 // #                 同时配合澳门盘口的走势，盘口低开，继续不断降盘到低一级甚至两球盘口低水。
 // #       结论：让球方赢盘
 	if (trengthBetterTeam == HOME_TEAM) && (stateBetterTeam == AWAY_TEAM) 
-		&& (isHandicaUpperpQdsa == LOWER)
+		&& (isHandicaUpperpQdsa == LOWER_S)
 	{
-		printf("浅开反诱模型,主队让球且低开，主队赢盘\n");
+		printf("浅开反诱模型,主队让球且低开\n");
+
+		if ((AbsLEVEL(pstDecodeData->fInstantHandicapX, pstDecodeData->fInitialHandicapX) == LOWER
+			|| AbsLEVEL(pstDecodeData->fInstantHandicapX, pstDecodeData->fInitialHandicapX) == LOWER_S)
+			&& (pstDecodeData->fInstantHandicapOver < 0.86))
+		{
+			printf("二次确认,无视初盘水位，终盘降盘一以上且保持低水 主队赢盘 90%\n");
+		}
+		else
+		{
+			printf("初盘判断，主队赢盘 60% \n");
+		}
 		return 0;
 	}
 
 	if (trengthBetterTeam == AWAY_TEAM) && (stateBetterTeam == HOME_TEAM) 
-		&& (isHandicaUpperpQdsa == LOWER)
+		&& (isHandicaUpperpQdsa == LOWER_S)
 	{
 		printf("浅开反诱模型,客队让球且低开，客队赢盘\n");
+
+		if ((AbsLEVEL(pstDecodeData->fInstantHandicapX, pstDecodeData->fInitialHandicapX) == LOWER
+			|| AbsLEVEL(pstDecodeData->fInstantHandicapX, pstDecodeData->fInitialHandicapX) == LOWER_S)
+			&& (pstDecodeData->fInstantHandicapOver < 0.86))
+		{
+			printf("二次确认,无视初盘水位，终盘降盘一以上且保持低水 客队赢盘 90%\n");
+		}
+		else
+		{
+			printf("初盘判断，客队赢盘 60% \n");
+		}
 		return 1;
 	}
 // # 2.5.5 高开反诱上盘
@@ -266,4 +426,5 @@ s		trengthBetterTeam = HOME_TEAM;
 // #                 同时配合澳门盘口的走势，盘口高开，临场维持高水或者还继续升盘到高一级盘口高水。
 // #       结论：让球方输盘
 
+	return -1;
 }
