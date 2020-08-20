@@ -225,8 +225,8 @@ int pyDataCal(AnalysParam *pstDecodeData)
 //#       分析思路：从广实分析可以得到，受让方为优势方。让球方开出的澳门盘口，高于qdsa盘口。
 //#                 同时配合澳门盘口的走势，临场临场维持低水或降盘到低一级盘口低水。
 //#       结论：让球方赢盘
-	if (trengthBetterTeam == HOME_TEAM) && (stateBetterTeam == AWAY_TEAM) 
-		&& (isHandicaUpperpQdsa == UPPER)
+	if ((trengthBetterTeam == HOME_TEAM) && (stateBetterTeam == AWAY_TEAM) 
+		&& (isHandicaUpperpQdsa == UPPER))
 	{
 		printf("高开阻上模型,主队让球且高开\n");
 
@@ -250,8 +250,8 @@ int pyDataCal(AnalysParam *pstDecodeData)
 		return 0;
 	}
 
-	if (trengthBetterTeam == AWAY_TEAM) && (stateBetterTeam == HOME_TEAM) 
-		&& (isHandicaUpperpQdsa == UPPER)
+	if ((trengthBetterTeam == AWAY_TEAM) && (stateBetterTeam == HOME_TEAM) 
+		&& (isHandicaUpperpQdsa == UPPER))
 	{
 		printf("高开阻上模型,客队让球且高开\n");
 		
@@ -279,8 +279,8 @@ int pyDataCal(AnalysParam *pstDecodeData)
 //#       分析思路：从广实分析可以得到，让球方为优势方。让球方开出的澳门盘口，低于qdsa盘口。
 //#                 同时配合澳门盘口的走势，临场维持高水或升盘到高一级盘口高水。
 //#       结论：让球方输盘
-	if (trengthBetterTeam == HOME_TEAM) && (stateBetterTeam == HOME_TEAM) && 
-		(isHandicaUpperpQdsa == LOWER)
+	if ((trengthBetterTeam == HOME_TEAM) && (stateBetterTeam == HOME_TEAM) && 
+		(isHandicaUpperpQdsa == LOWER))
 	{
 		printf("浅开诱上模型,主队让球且低开\n");
 		
@@ -303,8 +303,8 @@ int pyDataCal(AnalysParam *pstDecodeData)
 		return 1;
 	}
 
-	if (trengthBetterTeam == AWAY_TEAM) && (stateBetterTeam == AWAY_TEAM) 
-		&& (isHandicaUpperpQdsa == LOWER)
+	if ((trengthBetterTeam == AWAY_TEAM) && (stateBetterTeam == AWAY_TEAM) 
+		&& (isHandicaUpperpQdsa == LOWER))
 	{
 		printf("浅开诱上模型,客队让球且低开，主队赢盘\n");
 		
@@ -332,10 +332,25 @@ int pyDataCal(AnalysParam *pstDecodeData)
 //#       分析思路：从广实分析可以得到，让球方为优势方。让球方开出的澳门盘口，高于qdsa盘口两级及以上。
 //#                 同时配合澳门盘口的走势，盘口高开，临场维持高水或者还继续升盘到高一级盘口高水。
 //#       结论：让球方输盘
-	if (trengthBetterTeam == HOME_TEAM) && (stateBetterTeam == HOME_TEAM) 
-		&& (isHandicaUpperpQdsa == UPPER_S)
+// # 2.5.5 高开反诱上盘
+// #       解释：双方广实力对比，两队实力均很强，且两队实力差异很小。
+// #             但是菠菜高开了多级盘口，一般两级以上，这种盘庄家故意设置不平衡盘口，让彩民有倾向性。
+// #       分析思路：从广实分析可以得到，让球方为优势方。让球方开出的澳门盘口，高于qdsa盘口两级及以上。
+// #                 同时配合澳门盘口的走势，盘口高开，临场维持高水或者还继续升盘到高一级盘口高水。
+// #       结论：让球方输盘
+	
+	if (((trengthBetterTeam == HOME_TEAM) && (stateBetterTeam == HOME_TEAM))
+		&& (isHandicaUpperpQdsa == UPPER_S))
 	{
-		printf("高开诱上模型,主队让球且高开\n");
+		if ((pstDecodeData->iHomeRecentHomeWin + pstDecodeData->iHomeRecentHomeDraws > 8)
+			&& (pstDecodeData->iAwayRecentAwayWin + pstDecodeData->iAwayRecentAwayDraws > 8))
+		{			
+			printf("高开反诱上盘,主队让球且高开\n");
+		}
+		else
+		{
+			printf("高开诱上模型,主队让球且高开\n");
+		}	
 				
 		if (AbsLEVEL(pstDecodeData->fInitialHandicapX, pstDecodeData->fInstantHandicapX) == EQUAL
 			&& (pstDecodeData->fInitialHandicapOver > 0.95) 
@@ -355,11 +370,19 @@ int pyDataCal(AnalysParam *pstDecodeData)
 		return 1;
 	}
 
-	if (trengthBetterTeam == AWAY_TEAM) && (stateBetterTeam == AWAY_TEAM) 
-		&& (isHandicaUpperpQdsa == UPPER_S)
+	if ((trengthBetterTeam == AWAY_TEAM) && (stateBetterTeam == AWAY_TEAM) 
+		&& (isHandicaUpperpQdsa == UPPER_S))
 	{
-		printf("高开诱上模型,客队让球且高开，主队赢盘\n");
-		
+		if ((pstDecodeData->iHomeRecentHomeWin + pstDecodeData->iHomeRecentHomeDraws > 8)
+			&& (pstDecodeData->iAwayRecentAwayWin + pstDecodeData->iAwayRecentAwayDraws > 8))
+		{			
+			printf("高开反诱上盘,客队让球且高开\n");
+		}
+		else
+		{
+			printf("高开诱上模型,客队让球且高开\n");
+		}	
+
 		if (AbsLEVEL(pstDecodeData->fInitialHandicapX, pstDecodeData->fInstantHandicapX) == EQUAL
 			&& (pstDecodeData->fInitialHandicapOver > 0.95) 
 			&& (pstDecodeData->fInstantHandicapOver > 0.95))
@@ -384,8 +407,8 @@ int pyDataCal(AnalysParam *pstDecodeData)
 // #                 甚至弱队反而是优势方。让球方开出的澳门盘口，低于qdsa盘口两级及以上。
 // #                 同时配合澳门盘口的走势，盘口低开，继续不断降盘到低一级甚至两球盘口低水。
 // #       结论：让球方赢盘
-	if (trengthBetterTeam == HOME_TEAM) && (stateBetterTeam == AWAY_TEAM) 
-		&& (isHandicaUpperpQdsa == LOWER_S)
+	if ((trengthBetterTeam == HOME_TEAM) && (stateBetterTeam == AWAY_TEAM) 
+		&& (isHandicaUpperpQdsa == LOWER_S))
 	{
 		printf("浅开反诱模型,主队让球且低开\n");
 
@@ -402,8 +425,8 @@ int pyDataCal(AnalysParam *pstDecodeData)
 		return 0;
 	}
 
-	if (trengthBetterTeam == AWAY_TEAM) && (stateBetterTeam == HOME_TEAM) 
-		&& (isHandicaUpperpQdsa == LOWER_S)
+	if ((trengthBetterTeam == AWAY_TEAM) && (stateBetterTeam == HOME_TEAM) 
+		&& (isHandicaUpperpQdsa == LOWER_S))
 	{
 		printf("浅开反诱模型,客队让球且低开，客队赢盘\n");
 
@@ -419,12 +442,6 @@ int pyDataCal(AnalysParam *pstDecodeData)
 		}
 		return 1;
 	}
-// # 2.5.5 高开反诱上盘
-// #       解释：双方广实力对比，两队实力均很强，且两队实力差异很小。
-// #             但是菠菜高开了多级盘口，一般两级以上，这种盘庄家故意设置不平衡盘口，让彩民有倾向性。
-// #       分析思路：从广实分析可以得到，让球方为优势方。让球方开出的澳门盘口，高于qdsa盘口两级及以上。
-// #                 同时配合澳门盘口的走势，盘口高开，临场维持高水或者还继续升盘到高一级盘口高水。
-// #       结论：让球方输盘
-
+	
 	return -1;
 }
