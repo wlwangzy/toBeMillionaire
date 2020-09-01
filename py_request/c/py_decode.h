@@ -16,10 +16,10 @@ typedef bool            ZBOOL;
 typedef struct
 {
     // 亚赔变化表 （只需澳门）
-}HCLST;
+}PSTHCLST;
  
 
-typedef struct
+typedef struct DEFAnalysParam
 {
     ZINT iHomeRank;   // 主队排名
     ZINT iHomeRecentWin; // 主队近期战绩胜场次
@@ -41,7 +41,7 @@ typedef struct
     ZINT iVsRecHomeDraws; // 对赛往绩主队平场次
     ZINT iVsRecHomeLose; // 对赛往绩主队负场次
 
-    ZINT iQdsa ; // qdsa让球数据
+    ZINT iQdsa; // qdsa让球数据
 
     ZFLOAT  fInitialHandicapX; // 即时指数让球初盘（澳门）
     ZFLOAT  fInitialHandicapOver; // 即时指数让球初盘上盘赔率（澳门）
@@ -49,7 +49,7 @@ typedef struct
     ZFLOAT  fInstantHandicapX; // 即时指数让球实时盘（澳门） 最后一次赔率变化
     ZFLOAT  fInstantHandicapOver; // 即时指数让球实时盘上盘赔率（澳门）
     ZFLOAT  fInstantHandicapUnder; // 即时指数让球实时盘下盘赔率（澳门）
-    HCLST   *pstHandicapList;  // 亚赔变化表 （只需澳门）
+    PSTHCLST *pstHandicapList;  // 亚赔变化表 （只需澳门）
 
     ZFLOAT  fInitialHandicapX_crown; // 即时指数让球初盘（皇冠）
     ZFLOAT  fInitialHandicapOver_crown; // 即时指数让球初盘上盘赔率（皇冠）
@@ -60,38 +60,8 @@ typedef struct
     
 }AnalysParam;
 
-const char *cJsonLst[] = 
-{
-    "iHomeRank",
-    "iHomeRecentWin",
-    "iHomeRecentDraws",
-    "iHomeRecentLose",
-
-    "iAwayRank",
-    "iAwayRecentWin",
-    "iAwayRecentDraws",
-    "iAwayRecentLose",
-
-    "iVsRecHomeWin",
-    "iVsRecHomeDraws",
-    "iVsRecHomeLose",
-
-    "iQdsa",
-
-    "fInitialHandicapX",
-    "fInitialHandicapOver",
-    "fInitialHandicapUnder",
-    "fInstantHandicapX",
-    "fInstantHandicapOver",
-    "fInstantHandicapUnder",
-    "pstHandicapList",
-
-    "fInitialHandicapX_crown",
-    "fInitialHandicapOver_crown",
-    "fInitialHandicapUnder_crown",
-    "fInstantHandicapX_crown",
-    "fInstantHandicapOver_crown",
-    "fInstantHandicapUnder_crown",
-};
+#define logI(format, ...) printf(format);
+#define logE(format, ...) printf(format, ##__VA_ARGS__);
+#define logW(format, ...) printf(format);
 
 #endif
