@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 #include "py_decode.h"
 
 typedef enum
@@ -25,18 +26,24 @@ typedef enum
 	HIGH_ODDS   	//高水 >0.98
 }ODDS_LEVEL;
 
+typedef struct
+{
+	ZFLOAT handicap;
+	ZINT oddLevel;
+}QDSA_CFG;
+
 // 以baseHandicap为基准，判断盘口较baseHandicap的高开低开等级
 int AbsLEVEL(ZFLOAT compareHandicap, ZFLOAT baseHandicap)
 {
 	int level,absLevel;
 	level = fabs(compareHandicap - baseHandicap)/0.25;
-	if ((fabs(a) > fabs(b)) && (level == 1))
+	if ((fabs(compareHandicap) > fabs(baseHandicap)) && (level == 1))
 		absLevel = UPPER;
-	else if ((fabs(a) > fabs(b)) && (level > 1))
+	else if ((fabs(compareHandicap) > fabs(baseHandicap)) && (level > 1))
 		absLevel = UPPER_S;
-	else if ((fabs(a) < fabs(b)) && (level == 1))
+	else if ((fabs(compareHandicap) < fabs(baseHandicap)) && (level == 1))
 		absLevel = LOWER;
-	else if ((fabs(a) < fabs(b)) && (level > 1))
+	else if ((fabs(compareHandicap) < fabs(baseHandicap)) && (level > 1))
 		absLevel = LOWER_S;
 	else
 	{
@@ -46,71 +53,84 @@ int AbsLEVEL(ZFLOAT compareHandicap, ZFLOAT baseHandicap)
 	return absLevel;
 }
 
-ZFLOAT qdsaToHandicap(ZINT qdsa)
+QDSA_CFG qdsaToHandicap(ZINT qdsa)
 {
-	ZFLOAT handicap = 0.0;
+	QDSA_CFG qdsaCfg;
+	ZFLOAT oddSt = 0.0;
 
 	if (qdsa >= 0 && qdsa < 25)
-		qdsaToHandicap = 0.25;
+		qdsaCfg.handicap = 0.25;
 	else if (qdsa >= 25 && qdsa < 50)
-		qdsaToHandicap =  0.5;
+		qdsaCfg.handicap =  0.5;
 	else if (qdsa >= 50 && qdsa < 75)
-		qdsaToHandicap =  0.75;
+		qdsaCfg.handicap =  0.75;
 	else if (qdsa >= 75 && qdsa < 100)
-		qdsaToHandicap =  1.0;
+		qdsaCfg.handicap =  1.0;
 	else if (qdsa >= 100 && qdsa < 125)
-		qdsaToHandicap = 1.25;
+		qdsaCfg.handicap = 1.25;
 	else if (qdsa >= 125 && qdsa < 150)
-		qdsaToHandicap = 1.5;
+		qdsaCfg.handicap = 1.5;
 	else if (qdsa >= 150 && qdsa < 175)
-	 	qdsaToHandicap = 1.75;
+	 	qdsaCfg.handicap = 1.75;
 	else if (qdsa >= 175 && qdsa < 200)
-	 	qdsaToHandicap = 2.0;
+	 	qdsaCfg.handicap = 2.0;
 	else if (qdsa >= 200 && qdsa < 225)
-	 	qdsaToHandicap = 2.25;
+	 	qdsaCfg.handicap = 2.25;
 	else if (qdsa >= 225 && qdsa < 250)
-	 	qdsaToHandicap = 2.5;
+	 	qdsaCfg.handicap = 2.5;
 	else if (qdsa >= 275 && qdsa < 300)
-	  	qdsaToHandicap = 2.75;		  
+	  	qdsaCfg.handicap = 2.75;		  
 	else if (qdsa >= -25 && qdsa < 0)
-		qdsaToHandicap = 0.0;
+		qdsaCfg.handicap = 0.0;
 	else if (qdsa >= -50 && qdsa < -25)
-	 	qdsaToHandicap = -0.25;
+	 	qdsaCfg.handicap = -0.25;
 	else if (qdsa >= -75 && qdsa < -50)
-	  	qdsaToHandicap = -0.5;
+	  	qdsaCfg.handicap = -0.5;
 	else if (qdsa >= -100 && qdsa < -75)
-	  	qdsaToHandicap = -0.75;
+	  	qdsaCfg.handicap = -0.75;
 	else if (qdsa >= -125 && qdsa < -100)
-		qdsaToHandicap = -1.0;
+		qdsaCfg.handicap = -1.0;
 	else if (qdsa >= -150 && qdsa < -125)
-	   	qdsaToHandicap = -1.25;
+	   	qdsaCfg.handicap = -1.25;
 	else if (qdsa >= -175 && qdsa < -150)
-	  	qdsaToHandicap = -1.5;
+	  	qdsaCfg.handicap = -1.5;
 	else if (qdsa >= -200 && qdsa < -175)
-	  	qdsaToHandicap = -1.75;
+	  	qdsaCfg.handicap = -1.75;
 	else if (qdsa >= -225 && qdsa < -200)
-	  	qdsaToHandicap = -2.0;
+	  	qdsaCfg.handicap = -2.0;
 	else if (qdsa >= -250 && qdsa < -225)
-	  	qdsaToHandicap = -2.25;
+	  	qdsaCfg.handicap = -2.25;
 	else if (qdsa >= -300 && qdsa < -275)
-	  	qdsaToHandicap = -2.5;
+	  	qdsaCfg.handicap = -2.5;
 	else
 	{
 		printf("unknow qdsa %d\n",qdsa);
-		handicap = 0.0;
+		qdsaCfg.handicap = 0.0;
 	}
-		  
-	return handicap;
+	oddSt = qdsa / (qdsaCfg.handicap * 5);
+	if (oddSt < 0.4)
+		qdsaCfg.oddLevel = LOW_ODDS;
+	else if (oddSt < 0.8)
+		qdsaCfg.oddLevel = LOW_MID_ODDS;
+	else if (oddSt < 1.2)
+		qdsaCfg.oddLevel = MID_ODDS;
+	else if (oddSt < 1.6)
+		qdsaCfg.oddLevel = MID_HIGH_ODDS;
+	else
+		qdsaCfg.oddLevel = HIGH_ODDS;
+	
+	return qdsaCfg;
 }
 
 // 返回值 0:主队赢盘，1:客队赢盘  -1:无法判断
 int pyDataCal(AnalysParam *pstDecodeData)
 {
 	int homeScore = 0,awayScore = 0;
-	ZFLOAT qdsaHandicap = 0.0; // qdsa换算盘口
+	QDSA_CFG qdsaHandicap; // qdsa换算盘口
 	bool isHandicaUpperpQdsa;// 开出的盘口是否高于qdsa换算盘口 1:是 0:否
 	bool stateBetterTeam;// 实力更好的球队0:主队 1:客队
 	bool strengthBetterTeam; // 实力更好的球队 0:主队 1:客队
+	int iRank,iRankAbs;
 
 	printf("homeRank %d\n",pstDecodeData->iHomeRank);
 	printf("iHomeRecentWin %d\n",pstDecodeData->iHomeRecentWin);
@@ -138,49 +158,33 @@ int pyDataCal(AnalysParam *pstDecodeData)
 	printf("fInstantHandicapUnder_crown %f\n",pstDecodeData->fInstantHandicapUnder_crown);
 
 //# 1. 广实分析【主队作为基准】
-//# 1.1 排名对比，排名值小的为理论优势方。优势方得1分
-	if (pstDecodeData->iHomeRank > pstDecodeData->iAwayRank)
+	homeScore = pstDecodeData->iHomeRecentWin * 3 + pstDecodeData->iHomeRecentDraws;
+	awayScore = pstDecodeData->iAwayRecentWin * 3 + pstDecodeData->iAwayRecentDraws;
+	printf("1.0 homeScore %d awayScore %d\n",homeScore,awayScore);
+//# 1.1 排名对比，排名值小的为理论优势方。根据联赛球队个数，越靠前得分越高
+	iRank = abs(pstDecodeData->iHomeRank - pstDecodeData->iAwayRank);
+	iRankAbs = abs(iRank)/3; // 三名内认为是同一档
+	if (iRank < 0) // 主队排名高，给主队加分
 	{
-		homeScore += 1;
+		homeScore += iRankAbs;
 	}
-	else if (pstDecodeData->iHomeRank < pstDecodeData->iAwayRank)
+	else
 	{
-		awayScore += 1;
-	}
-	printf("1.1 homeScore %d awayScore %d\n",homeScore,awayScore)
-//# 1.2 对赛往绩对比，胜多的一方为优势方。优势方得4分
-	if (pstDecodeData->iVsRecHomeWin > pstDecodeData->iVsRecHomeLose)
-	{
-		homeScore += 4;
-	}
-	else if (pstDecodeData->iVsRecHomeWin < pstDecodeData->iVsRecHomeLose)
-	{
-		awayScore += 4;
-	}
-	printf("1.2 homeScore %d awayScore %d\n",homeScore,awayScore)
-//# 1.3 近期战绩对比，对比10场，胜+平多的一方为优势方。优势方得2分
-	if (pstDecodeData->iHomeRecentWin + pstDecodeData->iHomeRecentDraws > 
-		pstDecodeData->iAwayRecentWin + pstDecodeData->iAwayRecentDraws)
-	{
-		homeScore += 2;
-	}
-	else if (pstDecodeData->iHomeRecentWin + pstDecodeData->iHomeRecentDraws < 
-		pstDecodeData->iAwayRecentWin + pstDecodeData->iAwayRecentDraws)
-	{
-		awayScore += 2;
-	}
-	printf("1.3 homeScore %d awayScore %d\n",homeScore,awayScore)
-//# 1.4 在近期战绩的基础上，查看主队主场战绩，客队客场战绩。胜+平多的一方为优势方。优势方得3分
-	if (pstDecodeData->iHomeRecentHomeWin + pstDecodeData->iHomeRecentHomeDraws > 
-		pstDecodeData->iAwayRecentAwayWin + pstDecodeData->iAwayRecentAwayDraws)
-	{
-		homeScore += 3;
-	}
-	else if (pstDecodeData->iHomeRecentWin + pstDecodeData->iHomeRecentDraws < 
-		pstDecodeData->iAwayRecentWin + pstDecodeData->iAwayRecentDraws)
-	{
-		awayScore += 3;
-	}
+		awayScore += iRankAbs;
+	}	
+	printf("1.1 homeScore %d awayScore %d\n",homeScore,awayScore);
+//# 1.2 对赛往绩对比，胜多的一方为优势方。
+	homeScore += pstDecodeData->iVsRecHomeWin * 3;
+	awayScore += pstDecodeData->iVsRecHomeLose * 3;
+	printf("1.2 homeScore %d awayScore %d\n",homeScore,awayScore);
+//# 1.3 近期战绩对比，对比10场，胜+平多的一方为优势方。放在广实当基础分
+	//homeScore += pstDecodeData->iHomeRecentWin * 3 + pstDecodeData->iHomeRecentDraws;
+	//awayScore += pstDecodeData->iAwayRecentWin * 3 + pstDecodeData->iAwayRecentDraws;
+	//printf("1.3 homeScore %d awayScore %d\n",homeScore,awayScore)
+//# 1.4 在近期战绩的基础上，查看主队主场战绩，客队客场战绩。胜+平多的一方为优势方。
+	//homeScore += pstDecodeData->iHomeRecentHomeWin * 3 + pstDecodeData->iHomeRecentHomeDraws;
+	//awayScore += pstDecodeData->iAwayRecentAwayWin * 3 + pstDecodeData->iAwayRecentAwayDraws;
+	//printf("1.4 homeScore %d awayScore %d\n",homeScore,awayScore)
 //# 1.5 综合两队优势得分，分高的为主观优势方。资金对优势方会有偏爱。若得分一致，主队为优势方
 	if (homeScore >= awayScore)
 	{
@@ -199,23 +203,23 @@ int pyDataCal(AnalysParam *pstDecodeData)
 	qdsaHandicap = qdsaToHandicap(pstDecodeData->iQdsa);
 //# 2.3.2 不存在，对比对赛往绩的近期及近几年平均让球能力【暂时可忽略不做】
 //# 2.4 对比澳门初盘让球数据和qdsa对应的让球能力。qdsa让球作为基准，澳门盘高于它，为高开，低于它为低开
-	if (fabs(pstDecodeData->fInitialHandicapX - qdsaHandicap) < 1e-6)
+	if (fabs(pstDecodeData->fInitialHandicapX - qdsaHandicap.handicap) < 1e-6)
 	{
 		printf("qdsaHandicap == initialHandicap\n");
 		return -1;
 	}
 
 	// 判断让球方是否高开,几高开等级
-	isHandicaUpperpQdsa = AbsLEVEL(pstDecodeData->fInitialHandicapX, qdsaHandicap)
+	isHandicaUpperpQdsa = AbsLEVEL(pstDecodeData->fInitialHandicapX, qdsaHandicap.handicap);
 
 	// 让球方是主队还是客队
 	if (pstDecodeData->fInitialHandicapX < 0.0)
 	{
-		trengthBetterTeam = AWAY_TEAM;
+		strengthBetterTeam = AWAY_TEAM;
 	}
 	else
 	{
-		trengthBetterTeam = HOME_TEAM;
+		strengthBetterTeam = HOME_TEAM;
 	}
 
 //# 2.5 看是否满足以下模型：
@@ -225,7 +229,7 @@ int pyDataCal(AnalysParam *pstDecodeData)
 //#       分析思路：从广实分析可以得到，受让方为优势方。让球方开出的澳门盘口，高于qdsa盘口。
 //#                 同时配合澳门盘口的走势，临场临场维持低水或降盘到低一级盘口低水。
 //#       结论：让球方赢盘
-	if ((trengthBetterTeam == HOME_TEAM) && (stateBetterTeam == AWAY_TEAM) 
+	if ((strengthBetterTeam == HOME_TEAM) && (stateBetterTeam == AWAY_TEAM) 
 		&& (isHandicaUpperpQdsa == UPPER))
 	{
 		printf("高开阻上模型,主队让球且高开\n");
@@ -250,7 +254,7 @@ int pyDataCal(AnalysParam *pstDecodeData)
 		return 0;
 	}
 
-	if ((trengthBetterTeam == AWAY_TEAM) && (stateBetterTeam == HOME_TEAM) 
+	if ((strengthBetterTeam == AWAY_TEAM) && (stateBetterTeam == HOME_TEAM) 
 		&& (isHandicaUpperpQdsa == UPPER))
 	{
 		printf("高开阻上模型,客队让球且高开\n");
@@ -279,7 +283,7 @@ int pyDataCal(AnalysParam *pstDecodeData)
 //#       分析思路：从广实分析可以得到，让球方为优势方。让球方开出的澳门盘口，低于qdsa盘口。
 //#                 同时配合澳门盘口的走势，临场维持高水或升盘到高一级盘口高水。
 //#       结论：让球方输盘
-	if ((trengthBetterTeam == HOME_TEAM) && (stateBetterTeam == HOME_TEAM) && 
+	if ((strengthBetterTeam == HOME_TEAM) && (stateBetterTeam == HOME_TEAM) && 
 		(isHandicaUpperpQdsa == LOWER))
 	{
 		printf("浅开诱上模型,主队让球且低开\n");
@@ -303,7 +307,7 @@ int pyDataCal(AnalysParam *pstDecodeData)
 		return 1;
 	}
 
-	if ((trengthBetterTeam == AWAY_TEAM) && (stateBetterTeam == AWAY_TEAM) 
+	if ((strengthBetterTeam == AWAY_TEAM) && (stateBetterTeam == AWAY_TEAM) 
 		&& (isHandicaUpperpQdsa == LOWER))
 	{
 		printf("浅开诱上模型,客队让球且低开，主队赢盘\n");
@@ -339,7 +343,7 @@ int pyDataCal(AnalysParam *pstDecodeData)
 // #                 同时配合澳门盘口的走势，盘口高开，临场维持高水或者还继续升盘到高一级盘口高水。
 // #       结论：让球方输盘
 	
-	if (((trengthBetterTeam == HOME_TEAM) && (stateBetterTeam == HOME_TEAM))
+	if (((strengthBetterTeam == HOME_TEAM) && (stateBetterTeam == HOME_TEAM))
 		&& (isHandicaUpperpQdsa == UPPER_S))
 	{
 		if ((pstDecodeData->iHomeRecentHomeWin + pstDecodeData->iHomeRecentHomeDraws > 8)
@@ -354,9 +358,18 @@ int pyDataCal(AnalysParam *pstDecodeData)
 				
 		if (AbsLEVEL(pstDecodeData->fInitialHandicapX, pstDecodeData->fInstantHandicapX) == EQUAL
 			&& (pstDecodeData->fInitialHandicapOver > 0.95) 
-			&& (pstDecodeData->fInstantHandicapOver > 0.95))
+			&& (pstDecodeData->fInstantHandicapOver > 0.87))
 		{
-			printf("二次确认,初盘终盘不变且均保持高水 客队赢盘 80%\n");
+			if (pstDecodeData->fInitialHandicapOver > pstDecodeData->fInstantHandicapOver)
+			{
+				printf("二次确认,初盘终盘不变,上盘有走热迹象且均保持较高水 客队赢盘 80%\n");
+			}
+			else
+			{
+				printf("二次确认,初盘终盘不变,上盘无走热迹象，不符合高开诱上模型，需人工确认\n");
+				return -1;
+			}
+			
 		}
 		else if (AbsLEVEL(pstDecodeData->fInstantHandicapX, pstDecodeData->fInitialHandicapX) == UPPER
 			&& (pstDecodeData->fInstantHandicapOver > 0.95))
@@ -370,7 +383,7 @@ int pyDataCal(AnalysParam *pstDecodeData)
 		return 1;
 	}
 
-	if ((trengthBetterTeam == AWAY_TEAM) && (stateBetterTeam == AWAY_TEAM) 
+	if ((strengthBetterTeam == AWAY_TEAM) && (stateBetterTeam == AWAY_TEAM) 
 		&& (isHandicaUpperpQdsa == UPPER_S))
 	{
 		if ((pstDecodeData->iHomeRecentHomeWin + pstDecodeData->iHomeRecentHomeDraws > 8)
@@ -385,9 +398,17 @@ int pyDataCal(AnalysParam *pstDecodeData)
 
 		if (AbsLEVEL(pstDecodeData->fInitialHandicapX, pstDecodeData->fInstantHandicapX) == EQUAL
 			&& (pstDecodeData->fInitialHandicapOver > 0.95) 
-			&& (pstDecodeData->fInstantHandicapOver > 0.95))
+			&& (pstDecodeData->fInstantHandicapOver > 0.87))
 		{
-			printf("二次确认,初盘终盘不变且均保持高水 主队赢盘 80%\n");
+			if (pstDecodeData->fInitialHandicapOver > pstDecodeData->fInstantHandicapOver)
+			{
+				printf("二次确认,初盘终盘不变，上盘有走热迹象且均保持较高水 主队赢盘 80%\n");
+			}
+			else
+			{
+				printf("二次确认,初盘终盘不变,上盘无走热迹象，不符合高开诱上模型，需人工确认\n");
+				return -1;
+			}
 		}
 		else if (AbsLEVEL(pstDecodeData->fInstantHandicapX, pstDecodeData->fInitialHandicapX) == UPPER
 			&& (pstDecodeData->fInstantHandicapOver > 0.95))
@@ -407,7 +428,7 @@ int pyDataCal(AnalysParam *pstDecodeData)
 // #                 甚至弱队反而是优势方。让球方开出的澳门盘口，低于qdsa盘口两级及以上。
 // #                 同时配合澳门盘口的走势，盘口低开，继续不断降盘到低一级甚至两球盘口低水。
 // #       结论：让球方赢盘
-	if ((trengthBetterTeam == HOME_TEAM) && (stateBetterTeam == AWAY_TEAM) 
+	if ((strengthBetterTeam == HOME_TEAM) && (stateBetterTeam == AWAY_TEAM) 
 		&& (isHandicaUpperpQdsa == LOWER_S))
 	{
 		printf("浅开反诱模型,主队让球且低开\n");
@@ -425,7 +446,7 @@ int pyDataCal(AnalysParam *pstDecodeData)
 		return 0;
 	}
 
-	if ((trengthBetterTeam == AWAY_TEAM) && (stateBetterTeam == HOME_TEAM) 
+	if ((strengthBetterTeam == AWAY_TEAM) && (stateBetterTeam == HOME_TEAM) 
 		&& (isHandicaUpperpQdsa == LOWER_S))
 	{
 		printf("浅开反诱模型,客队让球且低开，客队赢盘\n");
@@ -444,4 +465,13 @@ int pyDataCal(AnalysParam *pstDecodeData)
 	}
 	
 	return -1;
+}
+
+
+int main(int argc,char **argv)
+{
+	AnalysParam stDecodeData;
+	//stDecodeData
+	printf("test main\n");
+	
 }
