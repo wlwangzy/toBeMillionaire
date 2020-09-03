@@ -1,31 +1,50 @@
+import os
+
+INCFILE = os.path.dirname(__file__) + '/py_decode.h'
+SRCFILE = os.path.dirname(__file__) + '/py_decode.c'
 
 def checkStrNode(strNode):
     strAppend = "    "
+    sType = "" 
     if "i" == strNode[0]:
         strAppend += "DECJSONITEM_INT"
+        sType = "%d"
+        initData = 0
     elif "f" == strNode[0]:
         strAppend += "DECJSONITEM_FLOAT"
+        sType = "%f"
+        initData = 0.0
     elif "c" == strNode[0]:
         strAppend += "DECJSONITEM_STR"
+        sType = "%s"
+        initData = ""
     else:
         strAppend = ""
+        sType = ""
+        initData = ""
 
-    return strAppend
+    return strAppend, sType, initData
 
 def initWriteData(listNode):
-    listWriteData = []
+    listWriteDecData = []
+    listWriteOutData = []
+    listWriteInitData = []
     
     for strNode in listNode:
-        strAppend = checkStrNode(strNode)
+        strAppend, sType, initData = checkStrNode(strNode)
         if strAppend is "":
             pass #do check list or otther
-        strAppend += "(pstDecodeData, pJsonData, " + strNode +  ")\r\n"
-        listWriteData.append(strAppend)
+        strAppend += "(pstDecodeData, pJsonData, " + strNode +  ")\n"
+        listWriteDecData.append(strAppend)
+        strAppend = "    logI(\"" + strNode + " " + sType + " \\n\", pstDecodeData->" + strNode + ");\n"
+        listWriteOutData.append(strAppend)
+        strAppend = "   pstDecodeData->" + strNode + " = " + str(initData) + ";\n"
+        listWriteInitData.append(strAppend)
 
-    return listWriteData
+    return listWriteDecData, listWriteOutData, listWriteInitData
 
 def findIncName():
-    with open('py_decode.h', 'r') as f:
+    with open(INCFILE, 'r') as f:
         strList = f.readlines()
         #print(strList)
         iStrucFlag = 0;
@@ -42,25 +61,32 @@ def findIncName():
 
     return listNode
 
-def writeSrcFile(listWriteData):
+def writeSrcFile(strFind, listWriteDecData):
     iStart = 0
     iEnd = 0
     iPos = 0
-    with open('py_decode.c', 'r') as f:
+    with open(SRCFILE, 'r') as f:
         strList = f.readlines()
         for strNode in strList:
-            if "void pyDec_getJsonStr(AnalysParam *pstDecodeData, cJSON *pJsonData)" in strNode:
+            if strFind in strNode:
                 iStart = iPos
             if iStart is not 0 and "}" in strNode:
                 iEnd = iPos
                 break
             iPos += 1
     
-    with open('py_decode.c', 'w') as f:
-        writeData = strList[:iStart+2] + listWriteData + strList[iEnd:]
+    with open(SRCFILE, 'w') as f:
+        writeData = strList[:iStart+2] + listWriteDecData + strList[iEnd:]
         print(writeData)
         f.writelines(writeData)
+
+    
         
-    return "Ok"
+    print("Ok")
+
 if __name__ == "__main__":
-    print(writeSrcFile(initWriteData(findIncName())))
+    print(INCFILE)
+    listWriteDecData, listWriteOutData, listWriteInitData = initWriteData(findIncName())
+    writeSrcFile("void pyDec_getJsonStr(AnalysParam *pstDecodeData, cJSON *pJsonData)", listWriteDecData)
+    writeSrcFile("void pyDec_OutPutData(AnalysParam *pstDecodeData)", listWriteOutData)
+    writeSrcFile("void pyDec_InitData(AnalysParam *pstDecodeData)", listWriteInitData)

@@ -60,8 +60,9 @@ typedef struct DEFAnalysParam
     
 }AnalysParam;
 
-#define logI(format, ...) printf(format);
-#define logE(format, ...) printf(format, ##__VA_ARGS__);
-#define logW(format, ...) printf(format);
+#define logI(format, ...) printf(format, __VA_ARGS__); //logOut("INFO: ", __VA_ARGS__)
+#define logE(format, ...) logOut("ERROR: ", __VA_ARGS__)
+#define logW(...) logOut("WARN: ", __VA_ARGS__)
+#define logOut(sType, ...) printf(sType);printf(__VA_ARGS__);
 
 #endif
