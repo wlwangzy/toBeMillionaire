@@ -17,13 +17,13 @@
 									if(item)\
 										pstDecodeData->str = item->valuedouble; \
 									else \
-										logW("decode error "#str "\n");\										
-								}while(0); 
+										logW("decode error "#str "\n");\
+								}while(0);
 
 #define DECJSONITEM_STR(pstDecodeData, json, str)do{ \
 									cJSON *item = cJSON_GetObjectItem(json, #str); \
 									if(item)\
-										pstDecodeData->str = item->valuestring; \
+										memcpy(pstDecodeData->str, item->valuestring, sizeof(pstDecodeData->str)); \
 									else \
 										logW("decode error "#str "\n");\
 								}while(0); 
@@ -31,6 +31,8 @@
 
 void pyDec_getJsonStr(AnalysParam *pstDecodeData, cJSON *pJsonData)
 {
+    DECJSONITEM_INT(pstDecodeData, pJsonData, bNeutral)
+    DECJSONITEM_STR(pstDecodeData, pJsonData, cType)
     DECJSONITEM_INT(pstDecodeData, pJsonData, iHomeRank)
     DECJSONITEM_INT(pstDecodeData, pJsonData, iHomeRecentWin)
     DECJSONITEM_INT(pstDecodeData, pJsonData, iHomeRecentDraws)
@@ -65,6 +67,8 @@ void pyDec_getJsonStr(AnalysParam *pstDecodeData, cJSON *pJsonData)
 
 void pyDec_InitData(AnalysParam *pstDecodeData)
 {
+   pstDecodeData->bNeutral = 0;
+   memset(pstDecodeData->cType, 0, sizeof(pstDecodeData->cType));
    pstDecodeData->iHomeRank = 0;
    pstDecodeData->iHomeRecentWin = 0;
    pstDecodeData->iHomeRecentDraws = 0;
@@ -99,6 +103,8 @@ void pyDec_InitData(AnalysParam *pstDecodeData)
 
 void pyDec_OutPutData(AnalysParam *pstDecodeData)
 {
+    logI("bNeutral %d \n", pstDecodeData->bNeutral);
+    logI("cType %s \n", pstDecodeData->cType);
     logI("iHomeRank %d \n", pstDecodeData->iHomeRank);
     logI("iHomeRecentWin %d \n", pstDecodeData->iHomeRecentWin);
     logI("iHomeRecentDraws %d \n", pstDecodeData->iHomeRecentDraws);
@@ -134,14 +140,22 @@ void pyDec_OutPutData(AnalysParam *pstDecodeData)
 int main(int argc, const char *argv[])
 {
 	AnalysParam stDecodeData;
-	const char test[] = "{\"iHomeRank\" : 1}";
+	//const char test[] = "{\"iHomeRank\" : 1}";
 	cJSON *pJsonData = NULL;
 	
 	pJsonData = cJSON_Parse(argv[1]);
-	pJsonData = cJSON_Parse(test); //TEST CODE
+	//pJsonData = cJSON_Parse(test); //TEST CODE
+    if(!pJsonData)
+    {
+        logE("json is failed \n");
+        return 0;
+    }
+    
     pyDec_InitData(&stDecodeData);
 	pyDec_getJsonStr(&stDecodeData, pJsonData);
 	pyDec_OutPutData(&stDecodeData);
-	printf("ok %d \n", stDecodeData.iHomeRank);
+	logI("decode data is ok\n");
+
+    return 0;
 	//get stDecodeData do decode data
 }

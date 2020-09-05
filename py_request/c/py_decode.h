@@ -21,6 +21,8 @@ typedef struct
 
 typedef struct DEFAnalysParam
 {
+    ZBOOL bNeutral;   //是否为中
+    ZCHAR cType[10];      //中超。 中甲....
     ZINT iHomeRank;   // 主队排名
     ZINT iHomeRecentWin; // 主队近期战绩胜场次
     ZINT iHomeRecentDraws; // 主队近期战绩平场次
@@ -60,8 +62,8 @@ typedef struct DEFAnalysParam
     
 }AnalysParam;
 
-#define logI(format, ...) printf(format, __VA_ARGS__); //logOut("INFO: ", __VA_ARGS__)
-#define logE(format, ...) logOut("ERROR: ", __VA_ARGS__)
+#define logI(...) logOut("INFO ", __VA_ARGS__); //logOut("INFO: ", __VA_ARGS__)
+#define logE(...) logOut("ERROR: ", __VA_ARGS__)
 #define logW(...) logOut("WARN: ", __VA_ARGS__)
 #define logOut(sType, ...) printf(sType);printf(__VA_ARGS__);
 

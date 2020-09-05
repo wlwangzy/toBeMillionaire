@@ -3,10 +3,16 @@ import os
 INCFILE = os.path.dirname(__file__) + '/py_decode.h'
 SRCFILE = os.path.dirname(__file__) + '/py_decode.c'
 
+def checkType(sType):
+    if "[" in sType:
+        return sType.split("[")[0]
+    else:
+        return sType
+        
 def checkStrNode(strNode):
     strAppend = "    "
     sType = "" 
-    if "i" == strNode[0]:
+    if "i" == strNode[0] or "b" == strNode[0]:
         strAppend += "DECJSONITEM_INT"
         sType = "%d"
         initData = 0
@@ -17,7 +23,7 @@ def checkStrNode(strNode):
     elif "c" == strNode[0]:
         strAppend += "DECJSONITEM_STR"
         sType = "%s"
-        initData = ""
+        initData = "c"
     else:
         strAppend = ""
         sType = ""
@@ -31,6 +37,7 @@ def initWriteData(listNode):
     listWriteInitData = []
     
     for strNode in listNode:
+        strNode = checkType(strNode)
         strAppend, sType, initData = checkStrNode(strNode)
         if strAppend is "":
             pass #do check list or otther
@@ -38,7 +45,10 @@ def initWriteData(listNode):
         listWriteDecData.append(strAppend)
         strAppend = "    logI(\"" + strNode + " " + sType + " \\n\", pstDecodeData->" + strNode + ");\n"
         listWriteOutData.append(strAppend)
-        strAppend = "   pstDecodeData->" + strNode + " = " + str(initData) + ";\n"
+        if initData is not "c":
+            strAppend = "   pstDecodeData->" + strNode + " = " + str(initData) + ";\n"
+        else:
+            strAppend = "   memset(pstDecodeData->" + strNode + ", 0, sizeof(pstDecodeData->" + strNode + "));\n"
         listWriteInitData.append(strAppend)
 
     return listWriteDecData, listWriteOutData, listWriteInitData
