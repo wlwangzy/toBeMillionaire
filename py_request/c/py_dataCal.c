@@ -554,5 +554,6 @@ AnalysParam gTestGame2 =
 int main(int argc,char **argv)
 {
 	printf("test main\n");
+	pyDataCal(&gTestGame1);
 	pyDataCal(&gTestGame2);
 }
