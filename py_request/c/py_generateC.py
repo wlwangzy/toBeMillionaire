@@ -53,6 +53,10 @@ def initWriteData(listNode):
 
     return listWriteDecData, listWriteOutData, listWriteInitData
 
+def findIncChild(strFather, strFindNode):
+    with open(INCFILE, 'r') as f:
+        strList = f.readlines()
+
 def findIncName():
     with open(INCFILE, 'r') as f:
         strList = f.readlines()
@@ -65,10 +69,12 @@ def findIncName():
                 iStrucFlag = 1
             if "}" in strNode and iStrucFlag is 1:
                 iStrucFlag = 0
-            if iStrucFlag is 1 and ("Z" in strNode):#or "PST" in strNode):
+            if iStrucFlag is 1 and ("Z" in strNode):
                 #print(strNode)
                 listNode.append(strNode.split(';')[0].split(' ')[-1])
-
+            if "PST" in strNode:
+                tmpList = findIncChild(tmpList, strNode.split(';')[0].split(' ')[-1], strNode.split(';')[0].split(None,str.split(" "))[-2])
+                listNode.append(tmpList)
     return listNode
 
 def writeSrcFile(strFind, listWriteDecData):

@@ -26,9 +26,14 @@ def requstUrl(requestId, outPathFile):
     #print html.text
     classIndexData = praseHtmlIndexData(html.text)
     
-    allGameData = writeExcelData(outPathFile, classHistroyGameData, classInGameData1, classInGameData2, classIndexData, classIntegralData)
-
-    logI("write excel success")
+    allGameData = None
+    if outPathFile is not None:
+        allGameData = writeExcelData(outPathFile, classHistroyGameData, classInGameData1, classInGameData2, classIndexData, classIntegralData)
+        logI("write excel success")
+    else:
+        encodeToCData(classIntegralData)
+        return classIntegralData
+        pass
 
     return allGameData
 
@@ -85,9 +90,43 @@ def toGetRquest(sUrl):
     #print allGameData
     return True, dicData
 
+def toGetRquestNoExcel(sUrl):
+    requestId, errorData = decodeUrl(sUrl) 
+    if requestId is False:
+        return False, errorData
+
+    iTime = 0
+    allGameData = {}
+    allGameData = requstUrl(requestId, None)
+    '''
+    try:
+        allGameData = requstUrl(requestId, None)
+    except Exception as e:
+        logW(str(e))
+        while iTime < 5:
+            try:
+                allGameData = requstUrl(requestId, None)
+            except Exception as e:
+                logW(str(e))
+            else:
+                break
+            finally:
+                iTime += 1
+
+    if iTime == 3:
+        return False, "request timeout"
+    '''
+    #print(allGameData)
+    #for sNode in allGameData:
+    #    print(sNode)
+
+    return True
+
 
 
 if __name__ == "__main__":
+    toGetRquestNoExcel("http://zq.win007.com/analysis/1879863sb.html")
+    '''
     #toGetRquest("http://zq.win007.com/analysis/1743046sb.htm#porlet_0")
     sUrl = "http://zq.win007.com/analysis/1743046sb.htm#porlet_0"
 
@@ -115,3 +154,4 @@ if __name__ == "__main__":
     #print html.text
 
     praseHtmlNowData(html.text)
+    '''

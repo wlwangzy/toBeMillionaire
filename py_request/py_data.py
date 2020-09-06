@@ -153,23 +153,22 @@ class gameData:
         pass
 
     def outputData(self):
-        pass
-        # i = 0
-        # while i < self.iCount:
-        #     print "==============="
-        #     print self.sGameType[i]
-        #     print self.sGameDate[i]
-        #     print self.sGameHomeField[i]
-        #     print self.sCore[i]
-        #     print self.sCorner[i]
-        #     print self.sAwayGroun[i]
-        #     print "data :"
-        #     print self.fDataMap1
-        #     print self.fDataMap2
-        #     print "================"
-        #     i += 1
-        # print self.iCount
-        # print i
+        i = 0
+        while i < self.iCount:
+            print("===============")
+            print(self.sGameType[i])
+            print(self.sGameDate[i])
+            print(self.sGameHomeField[i])
+            print(self.sCore[i])
+            print(self.sCorner[i])
+            print(self.sAwayGroun[i])
+            print("data :")
+            #print(self.fDataMap1)
+            #print(self.fDataMap2)
+            print("================")
+            i += 1
+        print(self.iCount)
+        print(i)
 
 #即时指数数据
 class indexData:
@@ -314,6 +313,8 @@ def praseHtmlGameTableData(sHtmlData):
     finda2data  = 'var a2_data = (.*?);'
     findaVsH0data  = 'var Vs_hOdds=(.*?);'
     findaVsV0data  = 'var Vs_eOdds = (.*?);'
+
+   # print(sHtmlData)
     
     tmpData = re.findall(findVdata, sHtmlData , re.S)
     vData = tmpData[0]
@@ -337,7 +338,7 @@ def praseHtmlGameTableData(sHtmlData):
     #初始化历史战绩
     classHistroyGameData = gameData(classH0V0Data)
     praseDataOld(classHistroyGameData, praseData(vData[2:]))
-    #classHistroyGameData.outputData()
+    classHistroyGameData.outputData()
     #近期数据1
     classInGameData1 = gameData(classH0V0Data)
     praseDataOld(classInGameData1, praseData(hData[2:]))
@@ -358,6 +359,7 @@ def praseHtmlIndexData(sHtmlData):
 
     classIndexData = indexData()
     classIndexData.decodeIndexData(nowIndexData)
+    #classIndexData.outputData()
 
     return classIndexData
 
@@ -365,11 +367,11 @@ def praseHtmlIndexData(sHtmlData):
 def praseHtmlIntegralData(sHtmlData):
     #print sHtmlData
 
-    findTmp= '<tr align=middle bgcolor=x>(.*?)</tr>'
+    findTmp= '<tr align=middle bgcolor=.*?>(.*?)</tr>'
     tmpData = re.findall(findTmp, sHtmlData, re.S)
-    
+    #print(sHtmlData)
     #for node in tmpData:
-    #    print node
+    #    print(node)
     sTableName = re.findall('<font class=vander16 style="color:#000"><b>(.*?)</b>', sHtmlData, re.S)
 
     classIntegralData = integralData(sTableName[0], sTableName[1])
@@ -392,6 +394,26 @@ def praseHtmlNowData(sHtmlData):
     classNowData = nowTimeData()
     classNowData.decodeNowTimeData(tmpData, tmpData2)
     #classNowData.outputData()
+
+def encodeToCData(classIntegralData):
+    dicData = {}
+    dicData["iHomeRank"] = classIntegralData.integralDataList["全场"][0]["总"][8] #主队排名
+    dicData["iHomeRecentWin"] = classIntegralData.integralDataList["全场"][0]["总"][1] #主队近期战绩胜场次
+    dicData["iHomeRecentDraws"] = classIntegralData.integralDataList["全场"][0]["总"][2] #主队近期战绩平场次
+    dicData["iHomeRecentLose"] = classIntegralData.integralDataList["全场"][0]["总"][3] #主队近期战绩负场次
+    dicData["iHomeRecentHomeWin"] = classIntegralData.integralDataList["全场"][1]["主"][1] #主队近期战绩主场胜场次
+    dicData["iHomeRecentHomeDraws"] = classIntegralData.integralDataList["全场"][1]["主"][2] #主队近期战绩主场平场次
+    dicData["iHomeRecentHomeLose"] = classIntegralData.integralDataList["全场"][1]["主"][2] #主队近期战绩主场负场次
+
+    dicData["iAwayRank"] = classIntegralData.integralDataList["全场"][4]["总"][8] #客队排名
+    dicData["iAwayRecentWin"] = classIntegralData.integralDataList["全场"][4]["总"][1] #客队近期战绩胜场次
+    dicData["iAwayRecentDraws"] = classIntegralData.integralDataList["全场"][4]["总"][2] #客队近期战绩平场次
+    dicData["iAwayRecentLose"] = classIntegralData.integralDataList["全场"][4]["总"][3] #客队近期战绩负场次
+    dicData["iAwayRecentAwayWin"] = classIntegralData.integralDataList["全场"][6]["客"][1] #客队近期战绩客场胜场次
+    dicData["iAwayRecentAwayDraws"] = classIntegralData.integralDataList["全场"][6]["客"][2] #客队近期战绩客场平场次
+    dicData["iAwayRecentAwayLose"] = classIntegralData.integralDataList["全场"][6]["客"][2] #客队近期战绩客场负场次
+
+    print(dicData)
 
 if __name__ == "__main__":
     #test source data http://zq.win007.com/analysis/1743046sb.htm

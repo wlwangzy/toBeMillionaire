@@ -412,7 +412,7 @@ def updateExcelData(outPathFile, jsonDic):
     wBook.save(outPathFile)
 
 def writeExcelData(outPathFile, classHistroyGameData = None, classInGameData1 = None, classInGameData2 = None, classIndexData = None, classIntegralData = None):
-    book, sheet, sheet2, sheet3 = createExcel()
+    book, sheet, sheet2 = createExcel()
     iStartLine = 0
     iStartColum = 0
 
@@ -430,8 +430,8 @@ def writeExcelData(outPathFile, classHistroyGameData = None, classInGameData1 = 
     iStartLine = writeInGameData1(sheet2, iStartLine + 10, iStartColum, classInGameData1)
     iStartLine = writeInGameData2(sheet2, iStartLine + 10, iStartColum, classInGameData2)
 
-
-    book.save(outPathFile)
+    if outPathFile is not None:
+        book.save(outPathFile)
 
     return  gameDataList
 

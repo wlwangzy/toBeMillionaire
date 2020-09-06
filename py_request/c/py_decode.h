@@ -13,8 +13,22 @@ typedef float           ZFLOAT;
 typedef double          ZDOUBLE;
 typedef bool            ZBOOL;
 
-typedef struct
+typedef struct DEFPSTHCLSTNODE
 {
+    ZCHAR cTime[10];
+    ZCHAR cScore[10];
+    ZFLOAT fHome;
+    ZCHAR  cHandicap[10];
+    ZFLOAT fAway;
+    ZCHAR  cChanggeTime[10];
+    ZCHAR  cStatus[10];
+    // 亚赔变化表 （只需澳门）
+}PSTHCLSTNODE;
+
+typedef struct DEFPSTHCLST
+{
+    ZINT iSize;
+    PSTHCLSTNODE *pstNode;
     // 亚赔变化表 （只需澳门）
 }PSTHCLST;
  
@@ -51,7 +65,7 @@ typedef struct DEFAnalysParam
     ZFLOAT  fInstantHandicapX; // 即时指数让球实时盘（澳门） 最后一次赔率变化
     ZFLOAT  fInstantHandicapOver; // 即时指数让球实时盘上盘赔率（澳门）
     ZFLOAT  fInstantHandicapUnder; // 即时指数让球实时盘下盘赔率（澳门）
-    PSTHCLST *pstHandicapList;  // 亚赔变化表 （只需澳门）
+    PSTHCLST stHandicapList;  // 亚赔变化表 （只需澳门）
 
     ZFLOAT  fInitialHandicapX_crown; // 即时指数让球初盘（皇冠）
     ZFLOAT  fInitialHandicapOver_crown; // 即时指数让球初盘上盘赔率（皇冠）
