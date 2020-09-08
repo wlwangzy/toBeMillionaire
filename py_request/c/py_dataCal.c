@@ -165,7 +165,7 @@ int pyDataCal(AnalysParam *pstDecodeData)
 	printf("fInstantHandicapX_crown %0.2f\n",pstDecodeData->fInstantHandicapX_crown);
 	printf("fInstantHandicapOver_crown %0.2f\n",pstDecodeData->fInstantHandicapOver_crown);
 	printf("fInstantHandicapUnder_crown %0.2f\n",pstDecodeData->fInstantHandicapUnder_crown);
-	printf("***************************************\n");
+	printf("***************************************\n\n");
 
 //# 1. 广实分析【主队作为基准】
 	homeScore = pstDecodeData->iHomeRecentWin * 3 + pstDecodeData->iHomeRecentDraws;
@@ -216,11 +216,7 @@ int pyDataCal(AnalysParam *pstDecodeData)
 
 //# 2.3.2 不存在，对比对赛往绩的近期及近几年平均让球能力【暂时可忽略不做】
 //# 2.4 对比澳门初盘让球数据和qdsa对应的让球能力。qdsa让球作为基准，澳门盘高于它，为高开，低于它为低开
-	if (fabs(pstDecodeData->fInitialHandicapX - qdsaHandicap.handicap) < 1e-6)
-	{
-		printf("qdsaHandicap == initialHandicap\n");
-		return -1;
-	}
+
 
 	// 判断让球方是否高开,几高开等级
 	isHandicaUpperpQdsa = AbsLEVEL(pstDecodeData->fInitialHandicapX, qdsaHandicap.handicap);
@@ -237,6 +233,30 @@ int pyDataCal(AnalysParam *pstDecodeData)
 	}
 	printf("strengthBetterTeam %d\n",strengthBetterTeam);
 
+	if (fabs(pstDecodeData->fInitialHandicapX - qdsaHandicap.handicap) < 1e-6)
+	{
+		if (fabs(qdsaHandicap.handicap) < 1e-6)
+		{
+			printf("平手盘，盘口相同\n");	
+			if ((strengthBetterTeam == HOME_TEAM) && (stateBetterTeam == AWAY_TEAM))
+			{
+				if (AbsLEVEL(pstDecodeData->fInitialHandicapX, pstDecodeData->fInstantHandicapX) == EQUAL
+					&& (pstDecodeData->fInitialHandicapOver < 0.88) 
+					&& (pstDecodeData->fInstantHandicapOver < 0.88)
+					&& (pstDecodeData->fInitialHandicapOver < pstDecodeData->fInstantHandicapOver))
+				{
+					printf("二次确认,初盘终盘不变上盘保持低水水位有上升 主队赢盘 80% \n");
+				}
+				return 0;
+			}
+			return -1;
+		}
+		else
+		{
+			printf("非平手盘，盘口相同，放弃\n");
+			return -1;
+		}
+	}
 //# 2.5 看是否满足以下模型：
 //# 2.5.1 高开阻上模型（新手常用）：
 ////#       解释：让球方没有优势，受让方题材大（拉力大），菠菜高开盘口，增加门槛，阻碍彩民去上盘，
@@ -551,9 +571,46 @@ AnalysParam gTestGame2 =
     //PSTHCLST *pstHandicapList;  // 亚赔变化表 （只需澳门）
     
 };
+
+AnalysParam gTestGame3 = 
+{
+    .iHomeRank = 3,
+    .iHomeRecentWin = 4, // 主队近期战绩胜场次
+    .iHomeRecentDraws = 3, // 主队近期战绩平场次
+    .iHomeRecentLose = 3, // 主队近期战绩负场次
+    .iHomeRecentHomeWin = 7, // 主队近期战绩主场胜场次
+    .iHomeRecentHomeDraws = 1, // 主队近期战绩主场平场次
+    .iHomeRecentHomeLose = 2, // 主队近期战绩主场负场次
+
+    .iAwayRank = 11,    // 客队排名
+    .iAwayRecentWin = 2, // 客队近期战绩胜场次
+    .iAwayRecentDraws = 3, // 客队近期战绩平场次
+    .iAwayRecentLose = 5, // 客队近期战绩负场次
+    .iAwayRecentAwayWin = 2, // 客队近期战绩客场胜场次
+    .iAwayRecentAwayDraws = 4, // 客队近期战绩客场平场次
+    .iAwayRecentAwayLose = 4, // 客队近期战绩客场负场次
+
+    .iVsRecHomeWin = 2, // 对赛往绩主队胜场次
+    .iVsRecHomeDraws = 3, // 对赛往绩主队平场次
+    .iVsRecHomeLose = 5, // 对赛往绩主队负场次
+
+    .iQdsa = -3, // qdsa让球数据
+
+    .fInitialHandicapX = 0.0, // 即时指数让球初盘（澳门）
+    .fInitialHandicapOver = 0.76, // 即时指数让球初盘上盘赔率（澳门）
+    .fInitialHandicapUnder = 1.04, // 即时指数让球初盘下盘赔率（澳门）
+    .fInstantHandicapX = 0.0, // 即时指数让球实时盘（澳门） 最后一次赔率变化
+    .fInstantHandicapOver = 0.88, // 即时指数让球实时盘上盘赔率（澳门）
+    .fInstantHandicapUnder = 0.92, // 即时指数让球实时盘下盘赔率（澳门）
+    //PSTHCLST *pstHandicapList;  // 亚赔变化表 （只需澳门）
+    
+};
+
 int main(int argc,char **argv)
 {
 	printf("test main\n");
 	pyDataCal(&gTestGame1);
 	pyDataCal(&gTestGame2);
+	pyDataCal(&gTestGame3);
+
 }
