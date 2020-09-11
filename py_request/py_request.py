@@ -12,7 +12,7 @@ def requstUrl(requestId, outPathFile):
     header = {'User-Agent':'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36'}
     html = requests.get(requestUrl, headers = header)
     html.encoding = 'utf-8'
-    #print html.text
+    #print(html.text)
     classHistroyGameData, classInGameData1, classInGameData2 = praseHtmlGameTableData(html.text)
     classIntegralData = praseHtmlIntegralData(html.text)
 
@@ -125,7 +125,7 @@ def toGetRquestNoExcel(sUrl):
 
 
 if __name__ == "__main__":
-    toGetRquestNoExcel("http://zq.win007.com/analysis/1879863sb.html")
+    toGetRquestNoExcel("http://zq.win007.com/analysis/1879925sb.htm")
     '''
     #toGetRquest("http://zq.win007.com/analysis/1743046sb.htm#porlet_0")
     sUrl = "http://zq.win007.com/analysis/1743046sb.htm#porlet_0"
