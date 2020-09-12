@@ -13,7 +13,11 @@ def requstUrl(requestId, outPathFile):
     html = requests.get(requestUrl, headers = header)
     html.encoding = 'utf-8'
     #print html.text
+
+    # 对赛往绩、主队战绩、客队战绩
     classHistroyGameData, classInGameData1, classInGameData2 = praseHtmlGameTableData(html.text)
+
+    # 联赛积分排名
     classIntegralData = praseHtmlIntegralData(html.text)
 
     requestUrl2 = 'http://zq.win007.com/analysis/odds/' + requestId + '.htm?' + str(int(time.time()) * 1000)
@@ -24,6 +28,7 @@ def requstUrl(requestId, outPathFile):
     html.encoding = 'gb2312'
 
     #print html.text
+    # 即时指数比较
     classIndexData = praseHtmlIndexData(html.text)
     
     allGameData = None
@@ -31,7 +36,7 @@ def requstUrl(requestId, outPathFile):
         allGameData = writeExcelData(outPathFile, classHistroyGameData, classInGameData1, classInGameData2, classIndexData, classIntegralData)
         logI("write excel success")
     else:
-        encodeToCData(classIntegralData)
+        encodeToCData(classIntegralData,classHistroyGameData,classInGameData1,classInGameData2,classIndexData)
         return classIntegralData
         pass
 
@@ -40,11 +45,11 @@ def requstUrl(requestId, outPathFile):
 def decodeUrl(sUrl):
     sUrls = sUrl.split("sb")
     strLogE = "the url is error: " + sUrl
-    if len(sUrls) is 1:
+    if len(sUrls) == 1:
         return False, strLogE
     sUrlss = sUrls[0].split("/")
 
-    if len(sUrlss) is 1:
+    if len(sUrlss) == 1:
         return False, strLogE
 
     logI("url is %s " % sUrlss[-1])
@@ -116,7 +121,7 @@ def toGetRquestNoExcel(sUrl):
     if iTime == 3:
         return False, "request timeout"
     '''
-    #print(allGameData)
+    print(allGameData)
     #for sNode in allGameData:
     #    print(sNode)
 
@@ -125,7 +130,8 @@ def toGetRquestNoExcel(sUrl):
 
 
 if __name__ == "__main__":
-    toGetRquestNoExcel("http://zq.win007.com/analysis/1879863sb.html")
+    #http://zq.win007.com/analysis/1837343.htm
+    toGetRquestNoExcel("http://zq.win007.com/analysis/1896878sb.htm")
     '''
     #toGetRquest("http://zq.win007.com/analysis/1743046sb.htm#porlet_0")
     sUrl = "http://zq.win007.com/analysis/1743046sb.htm#porlet_0"

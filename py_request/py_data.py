@@ -62,6 +62,9 @@ class gameData:
         self.fDataMap1 = []         #初盘 终盘 前数据
         self.fDataMap2 = []         #初盘 终盘 后数据
         self.sGameResult = []       #胜负结果
+        self.sWinCnt = 0            #胜场次统计
+        self.sDrawCnt = 0           #平场次统计
+        self.sLoseCnt = 0           #负场次统计
         #self.fDataMain1 = {'皇冠':[], '澳门':[], 'Bet365':[], '易胜博':[], '12Bet':[]}   #主
         #self.fDataTap = {'皇冠':[], '澳门':[], 'Bet365':[], '易胜博':[], '12Bet':[]}  #盘口
         #self.fDataGuest1 = {'皇冠':[], '澳门':[], 'Bet365':[], '易胜博':[], '12Bet':[]}   #客
@@ -96,6 +99,9 @@ class gameData:
             
 
     def setData(self, sPraseData):
+        if self.iCount >= 10:
+            return
+
         sNodeList = sPraseData.split(',')
         #i = 0
         #for node2 in sNodeList:
@@ -124,10 +130,13 @@ class gameData:
 
         if int(sNodeList[12]) < 0:
             sTmpData = '负'
+            self.sLoseCnt += 1
         elif int(sNodeList[12]) > 0:
             sTmpData = '胜'
+            self.sWinCnt += 1
         else:
             sTmpData = '平'
+            self.sDrawCnt += 1
         self.sGameResult.append(sTmpData)
         #print("ddd " + sNodeList[15])
         dicData1 = {}
@@ -154,21 +163,24 @@ class gameData:
 
     def outputData(self):
         i = 0
-        while i < self.iCount:
-            print("===============")
+        while i < 10:
+            print("========game",i)
             print(self.sGameType[i])
             print(self.sGameDate[i])
             print(self.sGameHomeField[i])
             print(self.sCore[i])
             print(self.sCorner[i])
             print(self.sAwayGroun[i])
-            print("data :")
+            print(self.sGameResult[i])
             #print(self.fDataMap1)
             #print(self.fDataMap2)
             print("================")
             i += 1
-        print(self.iCount)
-        print(i)
+        print("共计数",self.iCount)
+        print("10场胜",self.sWinCnt)
+        print("10场平",self.sDrawCnt)
+        print("10场负",self.sLoseCnt)
+        #print(i)
 
 #即时指数数据
 class indexData:
@@ -176,7 +188,7 @@ class indexData:
          self.indexDataList = []
 
     def decodeIndexData(self, nowIndexData):
-        #print nowIndexData
+        #print(nowIndexData)
         nowIndexDatas = nowIndexData.split('^')
         self.indexDataList = []
         for node in nowIndexDatas:
@@ -188,7 +200,7 @@ class indexData:
             indexDataListNode[nodes[1]] = []
             indexDataListNode[nodes[1]].append(nodeData1)
             indexDataListNode[nodes[1]].append(nodeData2)
-            indexDataListNode[nodes[1]].append(nodeData3)
+            #indexDataListNode[nodes[1]].append(nodeData3)
             self.indexDataList.append(indexDataListNode)
         
     def outputData(self):
@@ -338,7 +350,7 @@ def praseHtmlGameTableData(sHtmlData):
     #初始化历史战绩
     classHistroyGameData = gameData(classH0V0Data)
     praseDataOld(classHistroyGameData, praseData(vData[2:]))
-    classHistroyGameData.outputData()
+    #classHistroyGameData.outputData()
     #近期数据1
     classInGameData1 = gameData(classH0V0Data)
     praseDataOld(classInGameData1, praseData(hData[2:]))
@@ -359,7 +371,7 @@ def praseHtmlIndexData(sHtmlData):
 
     classIndexData = indexData()
     classIndexData.decodeIndexData(nowIndexData)
-    #classIndexData.outputData()
+    classIndexData.outputData()
 
     return classIndexData
 
@@ -395,23 +407,27 @@ def praseHtmlNowData(sHtmlData):
     classNowData.decodeNowTimeData(tmpData, tmpData2)
     #classNowData.outputData()
 
-def encodeToCData(classIntegralData):
+def encodeToCData(classIntegralData,classHistroyGameData,classInGameData1,classInGameData2,classIndexData):
     dicData = {}
     dicData["iHomeRank"] = classIntegralData.integralDataList["全场"][0]["总"][8] #主队排名
-    dicData["iHomeRecentWin"] = classIntegralData.integralDataList["全场"][0]["总"][1] #主队近期战绩胜场次
-    dicData["iHomeRecentDraws"] = classIntegralData.integralDataList["全场"][0]["总"][2] #主队近期战绩平场次
-    dicData["iHomeRecentLose"] = classIntegralData.integralDataList["全场"][0]["总"][3] #主队近期战绩负场次
-    dicData["iHomeRecentHomeWin"] = classIntegralData.integralDataList["全场"][1]["主"][1] #主队近期战绩主场胜场次
-    dicData["iHomeRecentHomeDraws"] = classIntegralData.integralDataList["全场"][1]["主"][2] #主队近期战绩主场平场次
-    dicData["iHomeRecentHomeLose"] = classIntegralData.integralDataList["全场"][1]["主"][2] #主队近期战绩主场负场次
+    dicData["iHomeRecentWin"] = classInGameData1.sWinCnt #classIntegralData.integralDataList["全场"][0]["总"][1] #主队近期战绩胜场次
+    dicData["iHomeRecentDraws"] = classInGameData1.sDrawCnt #classIntegralData.integralDataList["全场"][0]["总"][2] #主队近期战绩平场次
+    dicData["iHomeRecentLose"] = classInGameData1.sLoseCnt #classIntegralData.integralDataList["全场"][0]["总"][3] #主队近期战绩负场次
+    #dicData["iHomeRecentHomeWin"] = classIntegralData.integralDataList["全场"][1]["主"][1] #主队近期战绩主场胜场次
+    #dicData["iHomeRecentHomeDraws"] = classIntegralData.integralDataList["全场"][1]["主"][2] #主队近期战绩主场平场次
+    #dicData["iHomeRecentHomeLose"] = classIntegralData.integralDataList["全场"][1]["主"][2] #主队近期战绩主场负场次
 
     dicData["iAwayRank"] = classIntegralData.integralDataList["全场"][4]["总"][8] #客队排名
-    dicData["iAwayRecentWin"] = classIntegralData.integralDataList["全场"][4]["总"][1] #客队近期战绩胜场次
-    dicData["iAwayRecentDraws"] = classIntegralData.integralDataList["全场"][4]["总"][2] #客队近期战绩平场次
-    dicData["iAwayRecentLose"] = classIntegralData.integralDataList["全场"][4]["总"][3] #客队近期战绩负场次
-    dicData["iAwayRecentAwayWin"] = classIntegralData.integralDataList["全场"][6]["客"][1] #客队近期战绩客场胜场次
-    dicData["iAwayRecentAwayDraws"] = classIntegralData.integralDataList["全场"][6]["客"][2] #客队近期战绩客场平场次
-    dicData["iAwayRecentAwayLose"] = classIntegralData.integralDataList["全场"][6]["客"][2] #客队近期战绩客场负场次
+    dicData["iAwayRecentWin"] = classInGameData2.sWinCnt #classIntegralData.integralDataList["全场"][4]["总"][1] #客队近期战绩胜场次
+    dicData["iAwayRecentDraws"] = classInGameData2.sDrawCnt #classIntegralData.integralDataList["全场"][4]["总"][2] #客队近期战绩平场次
+    dicData["iAwayRecentLose"] = classInGameData2.sLoseCnt #classIntegralData.integralDataList["全场"][4]["总"][3] #客队近期战绩负场次
+    #dicData["iAwayRecentAwayWin"] = classIntegralData.integralDataList["全场"][6]["客"][1] #客队近期战绩客场胜场次
+    #dicData["iAwayRecentAwayDraws"] = classIntegralData.integralDataList["全场"][6]["客"][2] #客队近期战绩客场平场次
+    #dicData["iAwayRecentAwayLose"] = classIntegralData.integralDataList["全场"][6]["客"][2] #客队近期战绩客场负场次
+    
+    dicData["iVsRecHomeWin"] = classHistroyGameData.sWinCnt # 对赛往绩主队胜场次
+    dicData["iVsRecHomeDraws"] = classHistroyGameData.sDrawCnt # 对赛往绩主队平场次
+    dicData["iVsRecHomeLose"] = classHistroyGameData.sLoseCnt # 对赛往绩主队负场次
 
     print(dicData)
 

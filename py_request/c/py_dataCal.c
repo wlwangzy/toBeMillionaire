@@ -135,7 +135,7 @@ int pyDataCal(AnalysParam *pstDecodeData)
 {
 	int homeScore = 0,awayScore = 0;
 	QDSA_CFG qdsaHandicap; // qdsa换算盘口
-	int isHandicaUpperpQdsa;// 开出的盘口是否高于qdsa换算盘口 1:是 0:否
+	int isHandicaUpperpQdsa;// 开出的盘口是否高于qdsa换算盘口
 	bool stateBetterTeam;// 实力更好的球队0:主队 1:客队
 	bool strengthBetterTeam; // 实力更好的球队 0:主队 1:客队
 	int iRank,iRankAbs;
@@ -643,6 +643,42 @@ AnalysParam gTestGame4 =
     
 };
 
+AnalysParam gTestGame5 = 
+{
+	.bNeutral = 0,
+	.cType = "智利甲",
+    .iHomeRank = 18,
+    .iHomeRecentWin = 1, // 主队近期战绩胜场次
+    .iHomeRecentDraws = 2, // 主队近期战绩平场次
+    .iHomeRecentLose = 6, // 主队近期战绩负场次
+    .iHomeRecentHomeWin = 1, // 主队近期战绩主场胜场次
+    .iHomeRecentHomeDraws = 1, // 主队近期战绩主场平场次
+    .iHomeRecentHomeLose = 2, // 主队近期战绩主场负场次
+
+    .iAwayRank = 6,    // 客队排名
+    .iAwayRecentWin = 4, // 客队近期战绩胜场次
+    .iAwayRecentDraws = 4, // 客队近期战绩平场次
+    .iAwayRecentLose = 1, // 客队近期战绩负场次
+    .iAwayRecentAwayWin = 2, // 客队近期战绩客场胜场次
+    .iAwayRecentAwayDraws = 3, // 客队近期战绩客场平场次
+    .iAwayRecentAwayLose = 0, // 客队近期战绩客场负场次
+
+    .iVsRecHomeWin = 3, // 对赛往绩主队胜场次
+    .iVsRecHomeDraws = 1, // 对赛往绩主队平场次
+    .iVsRecHomeLose = 6, // 对赛往绩主队负场次
+
+    .iQdsa = -75, // qdsa让球数据
+
+    .fInitialHandicapX = -0.25, // 即时指数让球初盘（澳门）
+    .fInitialHandicapOver = 0.81, // 即时指数让球初盘上盘赔率（澳门）
+    .fInitialHandicapUnder = 0.89, // 即时指数让球初盘下盘赔率（澳门）
+    .fInstantHandicapX = -0.5, // 即时指数让球实时盘（澳门） 最后一次赔率变化
+    .fInstantHandicapOver = 0.81, // 即时指数让球实时盘上盘赔率（澳门）
+    .fInstantHandicapUnder = 0.89, // 即时指数让球实时盘下盘赔率（澳门）
+    //PSTHCLST *pstHandicapList;  // 亚赔变化表 （只需澳门）
+    
+};
+
 int main(int argc,char **argv)
 {
 	printf("test main\n");
@@ -650,4 +686,5 @@ int main(int argc,char **argv)
 	pyDataCal(&gTestGame2);
 	pyDataCal(&gTestGame3);
 	pyDataCal(&gTestGame4);
+	pyDataCal(&gTestGame5);
 }
