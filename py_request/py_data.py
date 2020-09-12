@@ -412,32 +412,33 @@ def praseHtmlNowData(sHtmlData):
 def encodeToCData(classIntegralData,classHistroyGameData,classInGameData1,classInGameData2,classIndexData):
     dicData = {}
     dicData["iHomeRank"] = int(classIntegralData.integralDataList["全场"][0]["总"][8]) #主队排名
-    dicData["iHomeRecentWin"] = classInGameData1.sWinCnt #classIntegralData.integralDataList["全场"][0]["总"][1] #主队近期战绩胜场次
-    dicData["iHomeRecentDraws"] = classInGameData1.sDrawCnt #classIntegralData.integralDataList["全场"][0]["总"][2] #主队近期战绩平场次
-    dicData["iHomeRecentLose"] = classInGameData1.sLoseCnt #classIntegralData.integralDataList["全场"][0]["总"][3] #主队近期战绩负场次
-    #dicData["iHomeRecentHomeWin"] = int(classIntegralData.integralDataList["全场"][1]["主"][1]) #主队近期战绩主场胜场次
-    #dicData["iHomeRecentHomeDraws"] = int(classIntegralData.integralDataList["全场"][1]["主"][2]) #主队近期战绩主场平场次
-    #dicData["iHomeRecentHomeLose"] = int(classIntegralData.integralDataList["全场"][1]["主"][2]) #主队近期战绩主场负场次
-
-    dicData["iAwayRank"] = classIntegralData.integralDataList["全场"][4]["总"][8] #客队排名
-    dicData["iAwayRecentWin"] = classInGameData2.sWinCnt #classIntegralData.integralDataList["全场"][4]["总"][1] #客队近期战绩胜场次
-    dicData["iAwayRecentDraws"] = classInGameData2.sDrawCnt #classIntegralData.integralDataList["全场"][4]["总"][2] #客队近期战绩平场次
-    dicData["iAwayRecentLose"] = classInGameData2.sLoseCnt #classIntegralData.integralDataList["全场"][4]["总"][3] #客队近期战绩负场次
-    #dicData["iAwayRecentAwayWin"] = int(classIntegralData.integralDataList["全场"][6]["客"][1]) #客队近期战绩客场胜场次
-    #dicData["iAwayRecentAwayDraws"] = int(classIntegralData.integralDataList["全场"][6]["客"][2]) #客队近期战绩客场平场次
-    #dicData["iAwayRecentAwayLose"] = int(classIntegralData.integralDataList["全场"][6]["客"][2]) #客队近期战绩客场负场次
+    dicData["iHomeRecentWin"] = int(classInGameData1.sWinCnt) #classIntegralData.integralDataList["全场"][0]["总"][1] #主队近期战绩胜场次
+    dicData["iHomeRecentDraws"] = int(classInGameData1.sDrawCnt) #classIntegralData.integralDataList["全场"][0]["总"][2] #主队近期战绩平场次
+    dicData["iHomeRecentLose"] = int(classInGameData1.sLoseCnt) #classIntegralData.integralDataList["全场"][0]["总"][3] #主队近期战绩负场次
     
-    dicData["iVsRecHomeWin"] = classHistroyGameData.sWinCnt # 对赛往绩主队胜场次
-    dicData["iVsRecHomeDraws"] = classHistroyGameData.sDrawCnt # 对赛往绩主队平场次
-    dicData["iVsRecHomeLose"] = classHistroyGameData.sLoseCnt # 对赛往绩主队负场次
+    #用的联赛主场战绩
+    dicData["iHomeRecentHomeWin"] = int(classIntegralData.integralDataList["全场"][1]["主"][1]) #主队近期战绩主场胜场次
+    dicData["iHomeRecentHomeDraws"] = int(classIntegralData.integralDataList["全场"][1]["主"][2]) #主队近期战绩主场平场次
+    dicData["iHomeRecentHomeLose"] = int(classIntegralData.integralDataList["全场"][1]["主"][2]) #主队近期战绩主场负场次
+
+    dicData["iAwayRank"] = int(classIntegralData.integralDataList["全场"][4]["总"][8]) #客队排名
+    dicData["iAwayRecentWin"] = int(classInGameData2.sWinCnt) #classIntegralData.integralDataList["全场"][4]["总"][1] #客队近期战绩胜场次
+    dicData["iAwayRecentDraws"] = int(classInGameData2.sDrawCnt) #classIntegralData.integralDataList["全场"][4]["总"][2] #客队近期战绩平场次
+    dicData["iAwayRecentLose"] = int(classInGameData2.sLoseCnt) #classIntegralData.integralDataList["全场"][4]["总"][3] #客队近期战绩负场次
+    
+    #用的联赛主场战绩
+    dicData["iAwayRecentAwayWin"] = int(classIntegralData.integralDataList["全场"][6]["客"][1]) #客队近期战绩客场胜场次
+    dicData["iAwayRecentAwayDraws"] = int(classIntegralData.integralDataList["全场"][6]["客"][2]) #客队近期战绩客场平场次
+    dicData["iAwayRecentAwayLose"] = int(classIntegralData.integralDataList["全场"][6]["客"][2]) #客队近期战绩客场负场次
+    
+    dicData["iVsRecHomeWin"] = int(classHistroyGameData.sWinCnt) # 对赛往绩主队胜场次
+    dicData["iVsRecHomeDraws"] = int(classHistroyGameData.sDrawCnt) # 对赛往绩主队平场次
+    dicData["iVsRecHomeLose"] = int(classHistroyGameData.sLoseCnt) # 对赛往绩主队负场次
 
 
     #以下数据未进行赋值
     dicData["bNeutral"] = 0 #是否为中立 未赋值 默认给中立
     dicData["cType"] = "zc" #中超 中甲 等等
-    dicData["iVsRecHomeWin"] = 0
-    dicData["iVsRecHomeDraws"] = 0
-    dicData["iVsRecHomeLose"] = 0
 
     dicData["iQdsa"] = 0
     dicData["fInitialHandicapX"] = 0
