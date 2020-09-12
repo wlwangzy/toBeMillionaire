@@ -2,6 +2,8 @@
 
 import sys
 import re
+import json
+import platform
 from INCLUDE import *
 
 class H0V0Data:
@@ -409,27 +411,63 @@ def praseHtmlNowData(sHtmlData):
 
 def encodeToCData(classIntegralData,classHistroyGameData,classInGameData1,classInGameData2,classIndexData):
     dicData = {}
-    dicData["iHomeRank"] = classIntegralData.integralDataList["全场"][0]["总"][8] #主队排名
+    dicData["iHomeRank"] = int(classIntegralData.integralDataList["全场"][0]["总"][8]) #主队排名
     dicData["iHomeRecentWin"] = classInGameData1.sWinCnt #classIntegralData.integralDataList["全场"][0]["总"][1] #主队近期战绩胜场次
     dicData["iHomeRecentDraws"] = classInGameData1.sDrawCnt #classIntegralData.integralDataList["全场"][0]["总"][2] #主队近期战绩平场次
     dicData["iHomeRecentLose"] = classInGameData1.sLoseCnt #classIntegralData.integralDataList["全场"][0]["总"][3] #主队近期战绩负场次
-    #dicData["iHomeRecentHomeWin"] = classIntegralData.integralDataList["全场"][1]["主"][1] #主队近期战绩主场胜场次
-    #dicData["iHomeRecentHomeDraws"] = classIntegralData.integralDataList["全场"][1]["主"][2] #主队近期战绩主场平场次
-    #dicData["iHomeRecentHomeLose"] = classIntegralData.integralDataList["全场"][1]["主"][2] #主队近期战绩主场负场次
+    #dicData["iHomeRecentHomeWin"] = int(classIntegralData.integralDataList["全场"][1]["主"][1]) #主队近期战绩主场胜场次
+    #dicData["iHomeRecentHomeDraws"] = int(classIntegralData.integralDataList["全场"][1]["主"][2]) #主队近期战绩主场平场次
+    #dicData["iHomeRecentHomeLose"] = int(classIntegralData.integralDataList["全场"][1]["主"][2]) #主队近期战绩主场负场次
 
     dicData["iAwayRank"] = classIntegralData.integralDataList["全场"][4]["总"][8] #客队排名
     dicData["iAwayRecentWin"] = classInGameData2.sWinCnt #classIntegralData.integralDataList["全场"][4]["总"][1] #客队近期战绩胜场次
     dicData["iAwayRecentDraws"] = classInGameData2.sDrawCnt #classIntegralData.integralDataList["全场"][4]["总"][2] #客队近期战绩平场次
     dicData["iAwayRecentLose"] = classInGameData2.sLoseCnt #classIntegralData.integralDataList["全场"][4]["总"][3] #客队近期战绩负场次
-    #dicData["iAwayRecentAwayWin"] = classIntegralData.integralDataList["全场"][6]["客"][1] #客队近期战绩客场胜场次
-    #dicData["iAwayRecentAwayDraws"] = classIntegralData.integralDataList["全场"][6]["客"][2] #客队近期战绩客场平场次
-    #dicData["iAwayRecentAwayLose"] = classIntegralData.integralDataList["全场"][6]["客"][2] #客队近期战绩客场负场次
+    #dicData["iAwayRecentAwayWin"] = int(classIntegralData.integralDataList["全场"][6]["客"][1]) #客队近期战绩客场胜场次
+    #dicData["iAwayRecentAwayDraws"] = int(classIntegralData.integralDataList["全场"][6]["客"][2]) #客队近期战绩客场平场次
+    #dicData["iAwayRecentAwayLose"] = int(classIntegralData.integralDataList["全场"][6]["客"][2]) #客队近期战绩客场负场次
     
     dicData["iVsRecHomeWin"] = classHistroyGameData.sWinCnt # 对赛往绩主队胜场次
     dicData["iVsRecHomeDraws"] = classHistroyGameData.sDrawCnt # 对赛往绩主队平场次
     dicData["iVsRecHomeLose"] = classHistroyGameData.sLoseCnt # 对赛往绩主队负场次
 
-    print(dicData)
+
+    #以下数据未进行赋值
+    dicData["bNeutral"] = 0 #是否为中立 未赋值 默认给中立
+    dicData["cType"] = "zc" #中超 中甲 等等
+    dicData["iVsRecHomeWin"] = 0
+    dicData["iVsRecHomeDraws"] = 0
+    dicData["iVsRecHomeLose"] = 0
+
+    dicData["iQdsa"] = 0
+    dicData["fInitialHandicapX"] = 0
+    dicData["fInitialHandicapOver"] = 0
+    dicData["fInitialHandicapUnder"] = 0
+    dicData["fInstantHandicapX"] = 0
+    dicData["fInstantHandicapOver"] = 0
+    dicData["fInstantHandicapUnder"] = 0
+    #stHandicapList  暂时不设置即时数据详细信息
+    dicData["fInitialHandicapX_crown"] = 0
+    dicData["fInitialHandicapOver_crown"] = 0
+    dicData["fInitialHandicapUnder_crown"] = 0
+    dicData["fInstantHandicapX_crown"] = 0
+    dicData["fInstantHandicapOver_crown"] = 0
+    dicData["fInstantHandicapUnder_crown"] = 0
+
+
+    #print(dicData)
+    strJson = json.dumps(dicData)
+    #print(strJson)
+    strJson = strJson.replace("\"", "\\\"")
+    
+    if platform.system() is "Windows":
+        exeName = "py_decode.exe"
+    else:
+        exeName = "py_decode"
+
+    exePath = os.path.dirname(__file__) + "/c/" + exeName + " \"" + strJson + "\""
+    r_v = os.system(exePath) 
+    print(r_v)
 
 if __name__ == "__main__":
     #test source data http://zq.win007.com/analysis/1743046sb.htm

@@ -79,6 +79,6 @@ typedef struct DEFAnalysParam
 #define logI(...) logOut("INFO ", __VA_ARGS__); //logOut("INFO: ", __VA_ARGS__)
 #define logE(...) logOut("ERROR: ", __VA_ARGS__)
 #define logW(...) logOut("WARN: ", __VA_ARGS__)
-#define logOut(sType, ...) printf(sType);printf(__VA_ARGS__);
+#define logOut(sType, ...) do{printf(sType);printf(__VA_ARGS__);}while(0);
 
 #endif

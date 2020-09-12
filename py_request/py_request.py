@@ -12,9 +12,11 @@ def requstUrl(requestId, outPathFile):
     header = {'User-Agent':'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36'}
     html = requests.get(requestUrl, headers = header)
     html.encoding = 'utf-8'
+
     #print html.text
 
     # 对赛往绩、主队战绩、客队战绩
+
     classHistroyGameData, classInGameData1, classInGameData2 = praseHtmlGameTableData(html.text)
 
     # 联赛积分排名

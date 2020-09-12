@@ -56,6 +56,8 @@ def initWriteData(listNode):
 def findIncChild(strFather, strFindNode):
     with open(INCFILE, 'r') as f:
         strList = f.readlines()
+        
+
 
 def findIncName():
     with open(INCFILE, 'r') as f:
