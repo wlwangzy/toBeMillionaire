@@ -16,7 +16,6 @@ def requstUrl(requestId, outPathFile):
     #print html.text
 
     # 对赛往绩、主队战绩、客队战绩
-
     classHistroyGameData, classInGameData1, classInGameData2 = praseHtmlGameTableData(html.text)
 
     # 联赛积分排名
@@ -27,7 +26,7 @@ def requstUrl(requestId, outPathFile):
     header2 = {'User-Agent':'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36',
                 'Referer':'http://zq.win007.com/analysis/' + requestId + 'sb.htm'}
     html = requests.get(requestUrl2, headers = header2)
-    html.encoding = 'gb2312'
+    html.encoding = 'utf-8'
 
     #print html.text
     # 即时指数比较

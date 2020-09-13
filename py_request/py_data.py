@@ -198,7 +198,7 @@ class indexData:
             nodes = node.split(';')
             nodeData1 = nodes[2].split(',')#初盘 欧洲指数，欧转亚盘 实际最新亚盘 大小球
             nodeData2 = nodes[3].split(',')#终盘 欧洲指数，欧转亚盘 实际最新亚盘 大小球
-            nodeData3 = nodes[4].split(',')#滚球 欧洲指数，欧转亚盘 实际最新亚盘 大小球
+            #nodeData3 = nodes[4].split(',')#滚球 欧洲指数，欧转亚盘 实际最新亚盘 大小球
             indexDataListNode[nodes[1]] = []
             indexDataListNode[nodes[1]].append(nodeData1)
             indexDataListNode[nodes[1]].append(nodeData2)
@@ -209,6 +209,9 @@ class indexData:
         for node in self.indexDataList:
             print(node)
         print("index number = " + str(len(self.indexDataList)))
+
+        #with open('D:\\python\\aa.txt','a',encoding='utf-8') as file_handle:   # .txt可以不自己新建,代码会自动新建
+        #    file_handle.write("{}\n".format(self.indexDataList))
 
 #联赛积分排名
 class integralData:
@@ -441,19 +444,20 @@ def encodeToCData(classIntegralData,classHistroyGameData,classInGameData1,classI
     dicData["cType"] = "zc" #中超 中甲 等等
 
     dicData["iQdsa"] = 0
-    dicData["fInitialHandicapX"] = 0
-    dicData["fInitialHandicapOver"] = 0
-    dicData["fInitialHandicapUnder"] = 0
+
+    dicData["fInitialHandicapX"] =  0#float(classIndexData.indexDataList[0][0][0][0])
+    dicData["fInitialHandicapOver"] = float(classIndexData.indexDataList[0]["澳门"][0][7])
+    dicData["fInitialHandicapUnder"] = float(classIndexData.indexDataList[0]["澳门"][0][9])
     dicData["fInstantHandicapX"] = 0
-    dicData["fInstantHandicapOver"] = 0
-    dicData["fInstantHandicapUnder"] = 0
+    dicData["fInstantHandicapOver"] = float(classIndexData.indexDataList[0]["澳门"][0][7])
+    dicData["fInstantHandicapUnder"] = float(classIndexData.indexDataList[0]["澳门"][0][9])
     #stHandicapList  暂时不设置即时数据详细信息
-    dicData["fInitialHandicapX_crown"] = 0
-    dicData["fInitialHandicapOver_crown"] = 0
-    dicData["fInitialHandicapUnder_crown"] = 0
-    dicData["fInstantHandicapX_crown"] = 0
-    dicData["fInstantHandicapOver_crown"] = 0
-    dicData["fInstantHandicapUnder_crown"] = 0
+    dicData["fInitialHandicapX_crown"] = 0#float(classIndexData.indexDataList[1]["Crown"][0][8])
+    dicData["fInitialHandicapOver_crown"] = float(classIndexData.indexDataList[1]["Crown"][0][7])
+    dicData["fInitialHandicapUnder_crown"] = float(classIndexData.indexDataList[1]["Crown"][0][9])
+    dicData["fInstantHandicapX_crown"] = 0#float(classIndexData.indexDataList[1]["Crown"][1][8])
+    dicData["fInstantHandicapOver_crown"] = float(classIndexData.indexDataList[1]["Crown"][1][7])
+    dicData["fInstantHandicapUnder_crown"] = float(classIndexData.indexDataList[1]["Crown"][1][9])
 
 
     #print(dicData)
@@ -461,7 +465,7 @@ def encodeToCData(classIntegralData,classHistroyGameData,classInGameData1,classI
     #print(strJson)
     strJson = strJson.replace("\"", "\\\"")
     
-    if platform.system() is "Windows":
+    if platform.system() == "Windows":
         exeName = "py_decode.exe"
     else:
         exeName = "py_decode"
