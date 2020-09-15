@@ -131,8 +131,9 @@ def toGetRquestNoExcel(sUrl):
 
 
 if __name__ == "__main__":
-    #http://zq.win007.com/analysis/1837343.htm
-    toGetRquestNoExcel("http://zq.win007.com/analysis/1896878sb.htm")
+    #http://zq.win007.com/analysis/1877216sb.htm 客场让球例子
+    #http://zq.win007.com/analysis/1852874sb.htm 编译异常self.iGameId.append(sNodeList[15]) IndexError: list index out of range
+    toGetRquestNoExcel("http://zq.win007.com/analysis/1837353sb.htm")
     '''
     #toGetRquest("http://zq.win007.com/analysis/1743046sb.htm#porlet_0")
     sUrl = "http://zq.win007.com/analysis/1743046sb.htm#porlet_0"

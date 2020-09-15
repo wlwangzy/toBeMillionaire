@@ -445,20 +445,55 @@ def encodeToCData(classIntegralData,classHistroyGameData,classInGameData1,classI
 
     dicData["iQdsa"] = 0
 
-    dicData["fInitialHandicapX"] =  0#float(classIndexData.indexDataList[0][0][0][0])
-    dicData["fInitialHandicapOver"] = float(classIndexData.indexDataList[0]["澳门"][0][7])
-    dicData["fInitialHandicapUnder"] = float(classIndexData.indexDataList[0]["澳门"][0][9])
-    dicData["fInstantHandicapX"] = 0
-    dicData["fInstantHandicapOver"] = float(classIndexData.indexDataList[0]["澳门"][0][7])
-    dicData["fInstantHandicapUnder"] = float(classIndexData.indexDataList[0]["澳门"][0][9])
+    dicHandicapMap = {  '*球半':'-1.5',
+                        '*一/球半':'-1.25',
+                        '*一球':'-1.0',
+                        '*半/一':'-0.75',
+                        '*半球':'-0.5',
+                        '*平/半':'-0.25',
+                        '平手':'0.00',
+                        '平/半':'0.25',
+                        '半球':'0.5',
+                        '半/一':'0.75',
+                        '一球':'1.0',
+                        '一/球半':'1.25',
+                        '球半':'1.5',
+                        '球半/两':'1.75',
+                        '两球':'2.0',
+                        '两/两球半':'2.25',
+                        '两球半':'2.5'}
+    dicData["fInitialHandicapX"] =  float(dicHandicapMap[classIndexData.indexDataList[0]["澳门"][0][8]])
+    if dicData["fInitialHandicapX"] > 0:
+        dicData["fInitialHandicapOver"] = float(classIndexData.indexDataList[0]["澳门"][0][7])
+        dicData["fInitialHandicapUnder"] = float(classIndexData.indexDataList[0]["澳门"][0][9])
+    else:
+        dicData["fInitialHandicapOver"] = float(classIndexData.indexDataList[0]["澳门"][0][9])
+        dicData["fInitialHandicapUnder"] = float(classIndexData.indexDataList[0]["澳门"][0][7])
+    
+    dicData["fInstantHandicapX"] = float(dicHandicapMap[classIndexData.indexDataList[0]["澳门"][1][8]])
+    if dicData["fInstantHandicapX"] > 0:
+        dicData["fInstantHandicapOver"] = float(classIndexData.indexDataList[0]["澳门"][1][7])
+        dicData["fInstantHandicapUnder"] = float(classIndexData.indexDataList[0]["澳门"][1][9])
+    else:
+        dicData["fInstantHandicapOver"] = float(classIndexData.indexDataList[0]["澳门"][1][9])
+        dicData["fInstantHandicapUnder"] = float(classIndexData.indexDataList[0]["澳门"][1][7])
+    
     #stHandicapList  暂时不设置即时数据详细信息
-    dicData["fInitialHandicapX_crown"] = 0#float(classIndexData.indexDataList[1]["Crown"][0][8])
-    dicData["fInitialHandicapOver_crown"] = float(classIndexData.indexDataList[1]["Crown"][0][7])
-    dicData["fInitialHandicapUnder_crown"] = float(classIndexData.indexDataList[1]["Crown"][0][9])
-    dicData["fInstantHandicapX_crown"] = 0#float(classIndexData.indexDataList[1]["Crown"][1][8])
-    dicData["fInstantHandicapOver_crown"] = float(classIndexData.indexDataList[1]["Crown"][1][7])
-    dicData["fInstantHandicapUnder_crown"] = float(classIndexData.indexDataList[1]["Crown"][1][9])
+    dicData["fInitialHandicapX_crown"] = float(dicHandicapMap[classIndexData.indexDataList[1]["Crown"][0][8]])
+    if dicData["fInitialHandicapX_crown"] > 0:
+        dicData["fInitialHandicapOver_crown"] = float(classIndexData.indexDataList[1]["Crown"][0][7])
+        dicData["fInitialHandicapUnder_crown"] = float(classIndexData.indexDataList[1]["Crown"][0][9])
+    else:
+        dicData["fInitialHandicapOver_crown"] = float(classIndexData.indexDataList[1]["Crown"][0][9])
+        dicData["fInitialHandicapUnder_crown"] = float(classIndexData.indexDataList[1]["Crown"][0][7])
 
+    dicData["fInstantHandicapX_crown"] = float(dicHandicapMap[classIndexData.indexDataList[1]["Crown"][1][8]])
+    if dicData["fInstantHandicapX_crown"] > 0:
+        dicData["fInstantHandicapOver_crown"] = float(classIndexData.indexDataList[1]["Crown"][1][7])
+        dicData["fInstantHandicapUnder_crown"] = float(classIndexData.indexDataList[1]["Crown"][1][9])
+    else:
+        dicData["fInstantHandicapOver_crown"] = float(classIndexData.indexDataList[1]["Crown"][1][9])
+        dicData["fInstantHandicapUnder_crown"] = float(classIndexData.indexDataList[1]["Crown"][1][7])
 
     #print(dicData)
     strJson = json.dumps(dicData)
