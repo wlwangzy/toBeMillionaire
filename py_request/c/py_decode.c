@@ -2,7 +2,7 @@
 #include "cJSON.c"
 #include "cJSON.h"
 #include "py_decode.h"
-
+#include "py_dataCal.c"
 
 #define DECJSONITEM_INT(pstDecodeData, json, str)do{ \
 									cJSON *item = cJSON_GetObjectItem(json, #str); \
@@ -166,7 +166,8 @@ int main(int argc, const char *argv[])
     pyDec_getJsonStr(&stDecodeData, pJsonData);
 	pyDec_OutPutData(&stDecodeData);
 	logI("decode data is ok\n");
-
+    pyDataCal(&stDecodeData);
+    logI("pyDataCal is ok\n");
     return 0;
 	//get stDecodeData do decode data
 }

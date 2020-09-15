@@ -679,6 +679,7 @@ AnalysParam gTestGame5 =
     
 };
 
+#if 0
 int main(int argc,char **argv)
 {
 	printf("test main\n");
@@ -688,3 +689,4 @@ int main(int argc,char **argv)
 	pyDataCal(&gTestGame4);
 	pyDataCal(&gTestGame5);
 }
+#endif
