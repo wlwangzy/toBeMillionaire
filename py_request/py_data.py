@@ -316,7 +316,10 @@ def praseData(sStr):
 def praseDataOld(classOldGameData, sStrList):
     for node in sStrList:
         #print("test : " + node)
-        classOldGameData.setData(node)
+        if node is '' or node is None:
+            return None
+        else:
+            classOldGameData.setData(node)
 
 #解析对应数据表格
 def praseDataH0V0(classH0V0Data, sStrListH0, sStrListV0):
