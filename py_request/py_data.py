@@ -164,8 +164,12 @@ class gameData:
         pass
 
     def outputData(self):
+        if self.iCount > 10:
+            gameCnt = 10
+        else:
+            gameCnt = self.iCount
         i = 0
-        while i < 10:
+        while i < gameCnt:
             print("========game",i)
             print(self.sGameType[i])
             print(self.sGameDate[i])
@@ -179,9 +183,9 @@ class gameData:
             print("================")
             i += 1
         print("共计数",self.iCount)
-        print("10场胜",self.sWinCnt)
-        print("10场平",self.sDrawCnt)
-        print("10场负",self.sLoseCnt)
+        print("胜",self.sWinCnt)
+        print("平",self.sDrawCnt)
+        print("负",self.sLoseCnt)
         #print(i)
 
 #即时指数数据
@@ -316,7 +320,7 @@ def praseData(sStr):
 def praseDataOld(classOldGameData, sStrList):
     for node in sStrList:
         #print("test : " + node)
-        if node is '' or node is None:
+        if node == '' or node == None:
             return None
         else:
             classOldGameData.setData(node)
