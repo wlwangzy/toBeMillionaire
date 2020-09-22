@@ -142,11 +142,11 @@ int main(int argc, const char *argv[])
 	AnalysParam stDecodeData;
     ZINT i = 0;
 	//const char test[] = "{\"iHomeRank\" : 1}";
-    logI("argc %d \n", argc);
-    for(; i < argc; i++)
-    {
-        logI("argv %d %s \n", i, argv[i]);
-    }
+    //logI("argc %d \n", argc);
+    //for(; i < argc; i++)
+    //{
+    //    logI("argv %d %s \n", i, argv[i]);
+    //}
    
 	cJSON *pJsonData = NULL;
 	pJsonData = cJSON_Parse(argv[1]);
@@ -164,7 +164,7 @@ int main(int argc, const char *argv[])
     
     pyDec_InitData(&stDecodeData);
     pyDec_getJsonStr(&stDecodeData, pJsonData);
-	pyDec_OutPutData(&stDecodeData);
+	//pyDec_OutPutData(&stDecodeData);
 	logI("decode data is ok\n");
     pyDataCal(&stDecodeData);
     logI("pyDataCal is ok\n");

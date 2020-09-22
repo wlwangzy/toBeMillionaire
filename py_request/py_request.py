@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*- 
+from selenium import webdriver
 import requests
 import sys
 from py_data import *
@@ -103,8 +104,8 @@ def toGetRquestNoExcel(sUrl):
 
     iTime = 0
     allGameData = {}
-    allGameData = requstUrl(requestId, None)
-    '''
+    #allGameData = requstUrl(requestId, None)
+
     try:
         allGameData = requstUrl(requestId, None)
     except Exception as e:
@@ -121,19 +122,69 @@ def toGetRquestNoExcel(sUrl):
 
     if iTime == 3:
         return False, "request timeout"
-    '''
+
     print(allGameData)
     #for sNode in allGameData:
     #    print(sNode)
 
     return True
 
+def getIdList():
 
+    # 目标网页URL
+    url = "http://live.win007.com/"
+    
+    # 目标Tag : 数据table（id = 'table_live'）中的<tr>
+    trTagPath = "//table[@id='table_live']/tbody/tr"
+    
+    # 生成Web终端，并访问目标网页URL
+    driver = webdriver.Chrome()
+    driver.minimize_window()
+    driver.implicitly_wait(3)
+    driver.get(url)
+
+    print("")
+    print("processing ...")
+    print("")
+
+    # 解析网页标签
+    trTagList = driver.find_elements_by_xpath(trTagPath)
+    idList = []
+
+    for trTag in trTagList:
+        if trTag.is_displayed() and ("tr1_" == trTag.get_attribute("id")[0:4]) :
+            idList.append(trTag.get_attribute("id")[4:])
+    
+    # 关闭Web终端
+    driver.close()
+    
+    print("")
+    print("process over!")
+    print("")
+    
+    # 返回结果
+    return idList
 
 if __name__ == "__main__":
-    #http://zq.win007.com/analysis/1877216sb.htm 客场让球例子
-    #http://zq.win007.com/analysis/1852874sb.htm 编译异常self.iGameId.append(sNodeList[15]) IndexError: list index out of range
-    toGetRquestNoExcel("http://zq.win007.com/analysis/1837353sb.htm")
+    
+    retList = getIdList()
+
+    print("===========")
+    for id in retList:
+        print(id)
+
+    print("-----------")
+    print(len(retList))
+    print("===========")
+    
+    for id in retList:
+        url = "http://zq.win007.com/analysis/" + id + "sb.htm"
+        toGetRquestNoExcel(url)
+    
+    #url = "http://zq.win007.com/analysis/" + retList[0] + "sb.htm"
+    #url = "http://zq.win007.com/analysis/1879934sb.htm"
+    #toGetRquestNoExcel(url)
+
     '''
     #toGetRquest("http://zq.win007.com/analysis/1743046sb.htm#porlet_0")
     sUrl = "http://zq.win007.com/analysis/1743046sb.htm#porlet_0"
