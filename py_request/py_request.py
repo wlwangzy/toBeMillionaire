@@ -16,8 +16,8 @@ def requstUrl(requestId, outPathFile):
 
     #print html.text
 
-    # 对赛往绩、主队战绩、客队战绩
-    classHistroyGameData, classInGameData1, classInGameData2 = praseHtmlGameTableData(html.text)
+    # 本场比赛信息、对赛往绩、主队战绩、客队战绩
+    curGameInfo,classHistroyGameData, classInGameData1, classInGameData2 = praseHtmlGameTableData(html.text)
 
     # 联赛积分排名
     classIntegralData = praseHtmlIntegralData(html.text)
@@ -40,7 +40,7 @@ def requstUrl(requestId, outPathFile):
         return allGameData
     else:
         gameDicData = {}
-        gameDicData = encodeToCData(requestId,classIntegralData,classHistroyGameData,classInGameData1,classInGameData2,classIndexData)
+        gameDicData = encodeToCData(requestId,curGameInfo,classIntegralData,classHistroyGameData,classInGameData1,classInGameData2,classIndexData)
         return gameDicData
 
 def decodeUrl(sUrl):
@@ -56,6 +56,13 @@ def decodeUrl(sUrl):
     logI("url is %s " % sUrlss[-1])
 
     return sUrlss[-1], ""
+
+def saveTxt():
+    f = open('D:/python/py_request/name.txt',mode='w')
+    f.write('hello word 你好 \n') 
+    f.writelines(['hello\n','world\n','你好\n','世界\n'])
+    f.close()
+    return
 
 def toGetRquest(sUrl):
     requestId, errorData = decodeUrl(sUrl) 
@@ -109,12 +116,11 @@ def toGetRquestNoExcel(sUrl):
     try:
         allGameData = requstUrl(requestId, None)
     except Exception as e:
-        logW(str(e))
         while iTime < 5:
             try:
                 allGameData = requstUrl(requestId, None)
             except Exception as e:
-                logW(str(e))
+                logW("try again")
             else:
                 break
             finally:
@@ -126,7 +132,7 @@ def toGetRquestNoExcel(sUrl):
     #print(allGameData)
     #for sNode in allGameData:
     #    print(sNode)
-
+    #saveTxt()
     return allGameData
 
 def getIdList():

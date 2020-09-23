@@ -119,7 +119,7 @@ class gameData:
             else:
                 self.sGameHomeField.append(sNodeLists[-2].split('>')[1])
         except Exception as e:
-            logD(str(e) + ' sAwayGroun = ' + sNodeList[5])
+            #logD(str(e) + ' sAwayGroun = ' + sNodeList[5])
             self.sGameHomeField.append(sNodeList[5])
         
         self.sCore.append(sNodeList[8] + '-' + sNodeList[9] + '(' + sNodeList[10].split('\'')[1] + ')')
@@ -127,7 +127,7 @@ class gameData:
         try:
             self.sAwayGroun.append(sNodeList[7].split('>')[1].split('<')[0])
         except Exception as e:
-            logD(str(e) + ' sAwayGroun = ' + sNodeList[7])
+            #logD(str(e) + ' sAwayGroun = ' + sNodeList[7])
             self.sAwayGroun.append(sNodeList[7])
 
         if int(sNodeList[12]) < 0:
@@ -337,6 +337,10 @@ def praseHtmlGameTableData(sHtmlData):
     finda2data  = 'var a2_data = (.*?);'
     findaVsH0data  = 'var Vs_hOdds=(.*?);'
     findaVsV0data  = 'var Vs_eOdds = (.*?);'
+    findNeutral    = 'div class="home">.*?[(](.+?)[)]'
+    findGameType   = 'div class="vs">.*?"LName">(.+?)</a>'
+    findHomeTeam   = 'div class="home">.*?_.*?>(.+?)[()]'
+    findGuestTeam  = 'div class="guest">.*?_.*?>(.+?)</a>'
 
    # print(sHtmlData)
     
@@ -355,6 +359,24 @@ def praseHtmlGameTableData(sHtmlData):
     tmpData = re.findall(findaVsV0data, sHtmlData , re.S)
     v0Data = tmpData[0]
     
+    curGameInfo = {}
+    tmpData = re.findall(findNeutral, sHtmlData , re.S)
+    neutral = tmpData[0]
+    if neutral == "中":
+        curGameInfo["neutral"] = 1
+    else:
+        curGameInfo["neutral"] = 0
+    tmpData = re.findall(findGameType, sHtmlData , re.S)
+    gameType = tmpData[0]
+    curGameInfo["gameType"] = gameType
+    tmpData = re.findall(findHomeTeam, sHtmlData , re.S)
+    homeTeam = tmpData[0]
+    curGameInfo["homeTeam"] = homeTeam
+    tmpData = re.findall(findGuestTeam, sHtmlData , re.S)
+    guestTeam = tmpData[0]
+    curGameInfo["guestTeam"] = guestTeam
+    #print(curGameInfo)
+
     #初始化数据表格
     classH0V0Data = H0V0Data()
     praseDataH0V0(classH0V0Data, praseData(h0Data[2:-2]), praseData(v0Data[2:-2]))
@@ -372,7 +394,7 @@ def praseHtmlGameTableData(sHtmlData):
     praseDataOld(classInGameData2, praseData(aData[2:]))
     #classInGameData2.outputData()
 
-    return classHistroyGameData, classInGameData1, classInGameData2
+    return curGameInfo,classHistroyGameData, classInGameData1, classInGameData2
 
 #解析即时指数
 def praseHtmlIndexData(sHtmlData):
@@ -423,7 +445,7 @@ def doFindKeyList(data, keyList, sType):
     return findKeyList(data, data, keyList, 0, sType)
 
 def findKeyListErrOut(oldData, keyList, n, sType):
-    logD("Decode data:" + str(oldData) + " Error key: " + keyList[n])
+    #logD("Decode data:" + str(oldData) + " Error key: " + keyList[n])
     if sType == 'Float':
         returnData = 0.0
     elif sType == 'int':
@@ -459,12 +481,16 @@ def findKeyList(oldData, data, keyList, n, sType):
     return returnData
 
 
-def encodeToCData(gameId,classIntegralData,classHistroyGameData,classInGameData1,classInGameData2,classIndexData):
+def encodeToCData(gameId,curGameInfo,classIntegralData,classHistroyGameData,classInGameData1,classInGameData2,classIndexData):
     dicData = {}
 
+    #字典中和三个字段，不是decode中所需字段
     dicData["gameId"] = gameId
-    dicData["bNeutral"] = 0 #是否为中立 未赋值 默认给中立
-    dicData["cType"] = "zc" #中超 中甲 等等
+    dicData["homeTeam"] = curGameInfo["homeTeam"]
+    dicData["guestTeam"] = curGameInfo["guestTeam"]
+
+    dicData["bNeutral"] = curGameInfo["neutral"]
+    dicData["cType"] = curGameInfo["gameType"]
     dicData["iQdsa"] = 0
 
     if "全场" in classIntegralData.integralDataList.keys():
@@ -568,7 +594,7 @@ def decodeGameData(dicData):
 
     exePath = os.path.dirname(__file__) + "/c/" + exeName + " \"" + strJson + "\""
     r_v = os.system(exePath) 
-    print(r_v)
+
 
 if __name__ == "__main__":
     #test source data http://zq.win007.com/analysis/1743046sb.htm
