@@ -419,6 +419,46 @@ def praseHtmlNowData(sHtmlData):
     classNowData.decodeNowTimeData(tmpData, tmpData2)
     #classNowData.outputData()
 
+def doFindKeyList(data, keyList, sType):
+    return findKeyList(data, data, keyList, 0, sType)
+
+def findKeyListErrOut(oldData, keyList, n, sType):
+    logD("Decode data:" + str(oldData) + " Error key: " + keyList[n])
+    if sType == 'Float':
+        returnData = 0.0
+    elif sType == 'int':
+        returnData = 0
+    else:
+        returnData = ''
+
+    return returnData
+
+def findKeyList(oldData, data, keyList, n, sType):
+    returnData = None
+    #print(data, n)nbsp;
+    if data == '&nbsp;':
+        return findKeyListErrOut(oldData, keyList, n, sType)
+
+    try:
+        if n == len(keyList):
+            if sType == 'Float':
+                returnData = float(data)
+            elif sType == 'int':
+                returnData = int(data)
+            else:
+                returnData = str(data)
+            
+            return returnData
+                
+        returnData = findKeyList(oldData, data[keyList[n]], keyList, n + 1, type)
+
+    except Exception as e:
+        #print("error " + str(e))
+        return findKeyListErrOut(oldData, keyList, n, sType)
+
+    return returnData
+
+
 def encodeToCData(gameId,classIntegralData,classHistroyGameData,classInGameData1,classInGameData2,classIndexData):
     dicData = {}
 
@@ -428,25 +468,25 @@ def encodeToCData(gameId,classIntegralData,classHistroyGameData,classInGameData1
     dicData["iQdsa"] = 0
 
     if "全场" in classIntegralData.integralDataList.keys():
-        dicData["iHomeRank"] = int(classIntegralData.integralDataList["全场"][0]["总"][8]) #主队排名
+        dicData["iHomeRank"] = doFindKeyList(classIntegralData.integralDataList, ("全场", 0, "总", 8),  "int")#int(classIntegralData.integralDataList["全场"][0]["总"][8]) #主队排名
         dicData["iHomeRecentWin"] = int(classInGameData1.sWinCnt) #classIntegralData.integralDataList["全场"][0]["总"][1] #主队近期战绩胜场次
         dicData["iHomeRecentDraws"] = int(classInGameData1.sDrawCnt) #classIntegralData.integralDataList["全场"][0]["总"][2] #主队近期战绩平场次
         dicData["iHomeRecentLose"] = int(classInGameData1.sLoseCnt) #classIntegralData.integralDataList["全场"][0]["总"][3] #主队近期战绩负场次
     
         #用的联赛主场战绩
-        dicData["iHomeRecentHomeWin"] = int(classIntegralData.integralDataList["全场"][1]["主"][1]) #主队近期战绩主场胜场次
-        dicData["iHomeRecentHomeDraws"] = int(classIntegralData.integralDataList["全场"][1]["主"][2]) #主队近期战绩主场平场次
-        dicData["iHomeRecentHomeLose"] = int(classIntegralData.integralDataList["全场"][1]["主"][2]) #主队近期战绩主场负场次
+        dicData["iHomeRecentHomeWin"] = doFindKeyList(classIntegralData.integralDataList, ("全场", 1, "主", 1),  "int")#int(classIntegralData.integralDataList["全场"][1]["主"][1]) #主队近期战绩主场胜场次
+        dicData["iHomeRecentHomeDraws"] = doFindKeyList(classIntegralData.integralDataList, ("全场", 1, "主", 2),  "int")#i主队近期战绩主场平场次
+        dicData["iHomeRecentHomeLose"] = doFindKeyList(classIntegralData.integralDataList, ("全场", 1, "主", 3),  "int")#i主队近期战绩主场负场次
 
-        dicData["iAwayRank"] = int(classIntegralData.integralDataList["全场"][4]["总"][8]) #客队排名
+        dicData["iAwayRank"] = doFindKeyList(classIntegralData.integralDataList, ("全场", 4, "总", 8),  "int")#iint(classIntegralData.integralDataList["全场"][4]["总"][8]) #客队排名
         dicData["iAwayRecentWin"] = int(classInGameData2.sWinCnt) #classIntegralData.integralDataList["全场"][4]["总"][1] #客队近期战绩胜场次
         dicData["iAwayRecentDraws"] = int(classInGameData2.sDrawCnt) #classIntegralData.integralDataList["全场"][4]["总"][2] #客队近期战绩平场次
         dicData["iAwayRecentLose"] = int(classInGameData2.sLoseCnt) #classIntegralData.integralDataList["全场"][4]["总"][3] #客队近期战绩负场次
     
         #用的联赛主场战绩
-        dicData["iAwayRecentAwayWin"] = int(classIntegralData.integralDataList["全场"][6]["客"][1]) #客队近期战绩客场胜场次
-        dicData["iAwayRecentAwayDraws"] = int(classIntegralData.integralDataList["全场"][6]["客"][2]) #客队近期战绩客场平场次
-        dicData["iAwayRecentAwayLose"] = int(classIntegralData.integralDataList["全场"][6]["客"][2]) #客队近期战绩客场负场次
+        dicData["iAwayRecentAwayWin"] = doFindKeyList(classIntegralData.integralDataList, ("全场", 6, "客", 1),  "int")#int(classIntegralData.integralDataList["全场"][6]["客"][1]) #客队近期战绩客场胜场次
+        dicData["iAwayRecentAwayDraws"] = doFindKeyList(classIntegralData.integralDataList, ("全场", 6, "客", 2),  "int")#int(classIntegralData.integralDataList["全场"][6]["客"][2]) #客队近期战绩客场平场次
+        dicData["iAwayRecentAwayLose"] = doFindKeyList(classIntegralData.integralDataList, ("全场", 6, "客", 3),  "int")#int(classIntegralData.integralDataList["全场"][6]["客"][2]) #客队近期战绩客场负场次
     
     dicData["iVsRecHomeWin"] = int(classHistroyGameData.sWinCnt) # 对赛往绩主队胜场次
     dicData["iVsRecHomeDraws"] = int(classHistroyGameData.sDrawCnt) # 对赛往绩主队平场次
@@ -533,13 +573,16 @@ def decodeGameData(dicData):
 if __name__ == "__main__":
     #test source data http://zq.win007.com/analysis/1743046sb.htm
      #初始化数据表格
-    classH0V0Data = H0V0Data()
-    praseDataH0V0(classH0V0Data, praseData(t2[2:-2]), praseData(t3[2:-2]))
+    #classH0V0Data = H0V0Data()
+    #praseDataH0V0(classH0V0Data, praseData(t2[2:-2]), praseData(t3[2:-2]))
 
     #初始化历史战绩
-    classOldGameData = gameData(classH0V0Data)
-    praseDataOld(classOldGameData, praseData(t1[2:]))
+    #classOldGameData = gameData(classH0V0Data)
+    #praseDataOld(classOldGameData, praseData(t1[2:]))
 
-    classOldGameData.outputData()
-
+    #classOldGameData.outputData()
+    data = {"a" : {"aa" : 19}}
+    print(data["a"]["aa"])
+    print(findKeyList(data, data, ("c", "aa"), 0, "int"))
+    
 
