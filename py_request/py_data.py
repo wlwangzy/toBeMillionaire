@@ -389,7 +389,7 @@ def praseHtmlIndexData(sHtmlData):
 
 #解析联赛积分
 def praseHtmlIntegralData(sHtmlData):
-    #print sHtmlData
+    #print(sHtmlData)
 
     findTmp= '<tr align=middle bgcolor=.*?>(.*?)</tr>'
     tmpData = re.findall(findTmp, sHtmlData, re.S)
@@ -419,8 +419,14 @@ def praseHtmlNowData(sHtmlData):
     classNowData.decodeNowTimeData(tmpData, tmpData2)
     #classNowData.outputData()
 
-def encodeToCData(classIntegralData,classHistroyGameData,classInGameData1,classInGameData2,classIndexData):
+def encodeToCData(gameId,classIntegralData,classHistroyGameData,classInGameData1,classInGameData2,classIndexData):
     dicData = {}
+
+    dicData["gameId"] = gameId
+    dicData["bNeutral"] = 0 #是否为中立 未赋值 默认给中立
+    dicData["cType"] = "zc" #中超 中甲 等等
+    dicData["iQdsa"] = 0
+
     dicData["iHomeRank"] = int(classIntegralData.integralDataList["全场"][0]["总"][8]) #主队排名
     dicData["iHomeRecentWin"] = int(classInGameData1.sWinCnt) #classIntegralData.integralDataList["全场"][0]["总"][1] #主队近期战绩胜场次
     dicData["iHomeRecentDraws"] = int(classInGameData1.sDrawCnt) #classIntegralData.integralDataList["全场"][0]["总"][2] #主队近期战绩平场次
@@ -444,13 +450,6 @@ def encodeToCData(classIntegralData,classHistroyGameData,classInGameData1,classI
     dicData["iVsRecHomeWin"] = int(classHistroyGameData.sWinCnt) # 对赛往绩主队胜场次
     dicData["iVsRecHomeDraws"] = int(classHistroyGameData.sDrawCnt) # 对赛往绩主队平场次
     dicData["iVsRecHomeLose"] = int(classHistroyGameData.sLoseCnt) # 对赛往绩主队负场次
-
-
-    #以下数据未进行赋值
-    dicData["bNeutral"] = 0 #是否为中立 未赋值 默认给中立
-    dicData["cType"] = "zc" #中超 中甲 等等
-
-    dicData["iQdsa"] = 0
 
 #var GoalCn = "平手,平/半,半球,半/一,一球,一/球半,球半,球半/两,两球,两/两球半,两球半,两球半/三,三球,三/三球半,三球半,三球半/四球,四球,四/四球半,四球半,四球半/五,五球,五/五球半,五球半,五球半/六,六球,六/六球半,六球半,六球半/七,七球,七/七球半,七球半,七球半/八,八球,八/八球半,八球半,八球半/九,九球,九/九球半,九球半,九球半/十,十球".split(",");
 #var GoalCn2 = ["0", "0/0.5", "0.5", "0.5/1", "1", "1/1.5", "1.5", "1.5/2", "2", "2/2.5", "2.5", "2.5/3", "3", "3/3.5", "3.5", "3.5/4", "4", "4/4.5", "4.5", "4.5/5", "5", "5/5.5", "5.5", "5.5/6", "6", "6/6.5", "6.5", "6.5/7", "7", "7/7.5", "7.5", "7.5/8", "8", "8/8.5", "8.5", "8.5/9", "9", "9/9.5", "9.5", "9.5/10", "10", "10/10.5", "10.5", "10.5/11", "11", "11/11.5", "11.5", "11.5/12", "12", "12/12.5", "12.5", "12.5/13", "13", "13/13.5", "13.5", "13.5/14", "14"];
@@ -506,6 +505,11 @@ def encodeToCData(classIntegralData,classHistroyGameData,classInGameData1,classI
         dicData["fInstantHandicapUnder_crown"] = float(classIndexData.indexDataList[1]["Crown"][1][7])
 
     #print(dicData)
+    return dicData
+    #decodeGameData(dicData)
+
+
+def decodeGameData(dicData):
     strJson = json.dumps(dicData)
     #print(strJson)
     strJson = strJson.replace("\"", "\\\"")

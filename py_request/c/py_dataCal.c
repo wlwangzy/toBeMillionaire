@@ -139,7 +139,7 @@ int pyDataCal(AnalysParam *pstDecodeData)
 	bool stateBetterTeam;// 实力更好的球队0:主队 1:客队
 	bool strengthBetterTeam; // 实力更好的球队 0:主队 1:客队
 	int iRank,iRankAbs;
-
+#if 0
 	printf("***************************************\n");
 	printf("bNeutral %d\n",pstDecodeData->bNeutral);
 	printf("gameType %s \n",pstDecodeData->cType);
@@ -167,7 +167,7 @@ int pyDataCal(AnalysParam *pstDecodeData)
 	printf("fInstantHandicapOver_crown %0.2f\n",pstDecodeData->fInstantHandicapOver_crown);
 	printf("fInstantHandicapUnder_crown %0.2f\n",pstDecodeData->fInstantHandicapUnder_crown);
 	printf("***************************************\n\n");
-
+#endif
 //# 1. 广实分析【主队作为基准】
 	homeScore = pstDecodeData->iHomeRecentWin * 3 + pstDecodeData->iHomeRecentDraws;
 	awayScore = pstDecodeData->iAwayRecentWin * 3 + pstDecodeData->iAwayRecentDraws;

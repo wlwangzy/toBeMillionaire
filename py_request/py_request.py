@@ -38,8 +38,9 @@ def requstUrl(requestId, outPathFile):
         allGameData = writeExcelData(outPathFile, classHistroyGameData, classInGameData1, classInGameData2, classIndexData, classIntegralData)
         logI("write excel success")
     else:
-        encodeToCData(classIntegralData,classHistroyGameData,classInGameData1,classInGameData2,classIndexData)
-        return classIntegralData
+        gameDicData = {}
+        gameDicData = encodeToCData(requestId,classIntegralData,classHistroyGameData,classInGameData1,classInGameData2,classIndexData)
+        return gameDicData
         pass
 
     return allGameData
@@ -102,10 +103,11 @@ def toGetRquestNoExcel(sUrl):
     if requestId is False:
         return False, errorData
 
-    iTime = 0
+    
     allGameData = {}
     #allGameData = requstUrl(requestId, None)
-
+      
+    iTime = 0
     try:
         allGameData = requstUrl(requestId, None)
     except Exception as e:
@@ -122,12 +124,12 @@ def toGetRquestNoExcel(sUrl):
 
     if iTime == 3:
         return False, "request timeout"
-
-    print(allGameData)
+    
+    #print(allGameData)
     #for sNode in allGameData:
     #    print(sNode)
 
-    return True
+    return allGameData
 
 def getIdList():
 
@@ -166,7 +168,7 @@ def getIdList():
     return idList
 
 if __name__ == "__main__":
-    
+    '''
     retList = getIdList()
 
     print("===========")
@@ -177,14 +179,34 @@ if __name__ == "__main__":
     print(len(retList))
     print("===========")
     
+    allGameData = []
     for id in retList:
         url = "http://zq.win007.com/analysis/" + id + "sb.htm"
-        toGetRquestNoExcel(url)
+        gameData = {}
+        gameData = toGetRquestNoExcel(url)
+        allGameData.append(gameData)
     
-    #url = "http://zq.win007.com/analysis/" + retList[0] + "sb.htm"
-    #url = "http://zq.win007.com/analysis/1879934sb.htm"
-    #toGetRquestNoExcel(url)
+    print(allGameData)
+    '''
+        
+    
+    url = "http://zq.win007.com/analysis/1879934sb.htm"
+    url1 = "http://zq.win007.com/analysis/1872471sb.htm"
+    #url = "http://zq.win007.com/analysis/1783594sb.htm"# 澳门无数据，无法解析的场次
+    allGameData = []
+    gameData = {}
+    gameData = toGetRquestNoExcel(url)
+    allGameData.append(gameData)
+    gameData1 = {}
+    gameData1 = toGetRquestNoExcel(url1)
+    allGameData.append(gameData1)
+    #print(allGameData)
+    #print(len(allGameData))
 
+    for i in range(len(allGameData)):
+        print(allGameData[i])
+        decodeGameData(allGameData[i])
+        
     '''
     #toGetRquest("http://zq.win007.com/analysis/1743046sb.htm#porlet_0")
     sUrl = "http://zq.win007.com/analysis/1743046sb.htm#porlet_0"
