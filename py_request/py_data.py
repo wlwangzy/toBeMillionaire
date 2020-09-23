@@ -54,7 +54,7 @@ class H0V0Data:
 class gameData:
     def __init__(self, H0V0Data):
         self.iCount = 0             #列表数量
-        self.iGameId = []            #id 用于查找数据
+        self.iGameId = []           #id 用于查找数据
         self.sGameType = []         #类型
         self.sGameDate = []         #日期
         self.sGameHomeField = []    #主场
@@ -119,7 +119,7 @@ class gameData:
             else:
                 self.sGameHomeField.append(sNodeLists[-2].split('>')[1])
         except Exception as e:
-            logD(str(e) + 'sAwayGroun = ' + sNodeList[5])
+            logD(str(e) + ' sAwayGroun = ' + sNodeList[5])
             self.sGameHomeField.append(sNodeList[5])
         
         self.sCore.append(sNodeList[8] + '-' + sNodeList[9] + '(' + sNodeList[10].split('\'')[1] + ')')
@@ -127,7 +127,7 @@ class gameData:
         try:
             self.sAwayGroun.append(sNodeList[7].split('>')[1].split('<')[0])
         except Exception as e:
-            logD(str(e) + 'sAwayGroun = ' + sNodeList[7])
+            logD(str(e) + ' sAwayGroun = ' + sNodeList[7])
             self.sAwayGroun.append(sNodeList[7])
 
         if int(sNodeList[12]) < 0:
@@ -427,25 +427,26 @@ def encodeToCData(gameId,classIntegralData,classHistroyGameData,classInGameData1
     dicData["cType"] = "zc" #中超 中甲 等等
     dicData["iQdsa"] = 0
 
-    dicData["iHomeRank"] = int(classIntegralData.integralDataList["全场"][0]["总"][8]) #主队排名
-    dicData["iHomeRecentWin"] = int(classInGameData1.sWinCnt) #classIntegralData.integralDataList["全场"][0]["总"][1] #主队近期战绩胜场次
-    dicData["iHomeRecentDraws"] = int(classInGameData1.sDrawCnt) #classIntegralData.integralDataList["全场"][0]["总"][2] #主队近期战绩平场次
-    dicData["iHomeRecentLose"] = int(classInGameData1.sLoseCnt) #classIntegralData.integralDataList["全场"][0]["总"][3] #主队近期战绩负场次
+    if "全场" in classIntegralData.integralDataList.keys():
+        dicData["iHomeRank"] = int(classIntegralData.integralDataList["全场"][0]["总"][8]) #主队排名
+        dicData["iHomeRecentWin"] = int(classInGameData1.sWinCnt) #classIntegralData.integralDataList["全场"][0]["总"][1] #主队近期战绩胜场次
+        dicData["iHomeRecentDraws"] = int(classInGameData1.sDrawCnt) #classIntegralData.integralDataList["全场"][0]["总"][2] #主队近期战绩平场次
+        dicData["iHomeRecentLose"] = int(classInGameData1.sLoseCnt) #classIntegralData.integralDataList["全场"][0]["总"][3] #主队近期战绩负场次
     
-    #用的联赛主场战绩
-    dicData["iHomeRecentHomeWin"] = int(classIntegralData.integralDataList["全场"][1]["主"][1]) #主队近期战绩主场胜场次
-    dicData["iHomeRecentHomeDraws"] = int(classIntegralData.integralDataList["全场"][1]["主"][2]) #主队近期战绩主场平场次
-    dicData["iHomeRecentHomeLose"] = int(classIntegralData.integralDataList["全场"][1]["主"][2]) #主队近期战绩主场负场次
+        #用的联赛主场战绩
+        dicData["iHomeRecentHomeWin"] = int(classIntegralData.integralDataList["全场"][1]["主"][1]) #主队近期战绩主场胜场次
+        dicData["iHomeRecentHomeDraws"] = int(classIntegralData.integralDataList["全场"][1]["主"][2]) #主队近期战绩主场平场次
+        dicData["iHomeRecentHomeLose"] = int(classIntegralData.integralDataList["全场"][1]["主"][2]) #主队近期战绩主场负场次
 
-    dicData["iAwayRank"] = int(classIntegralData.integralDataList["全场"][4]["总"][8]) #客队排名
-    dicData["iAwayRecentWin"] = int(classInGameData2.sWinCnt) #classIntegralData.integralDataList["全场"][4]["总"][1] #客队近期战绩胜场次
-    dicData["iAwayRecentDraws"] = int(classInGameData2.sDrawCnt) #classIntegralData.integralDataList["全场"][4]["总"][2] #客队近期战绩平场次
-    dicData["iAwayRecentLose"] = int(classInGameData2.sLoseCnt) #classIntegralData.integralDataList["全场"][4]["总"][3] #客队近期战绩负场次
+        dicData["iAwayRank"] = int(classIntegralData.integralDataList["全场"][4]["总"][8]) #客队排名
+        dicData["iAwayRecentWin"] = int(classInGameData2.sWinCnt) #classIntegralData.integralDataList["全场"][4]["总"][1] #客队近期战绩胜场次
+        dicData["iAwayRecentDraws"] = int(classInGameData2.sDrawCnt) #classIntegralData.integralDataList["全场"][4]["总"][2] #客队近期战绩平场次
+        dicData["iAwayRecentLose"] = int(classInGameData2.sLoseCnt) #classIntegralData.integralDataList["全场"][4]["总"][3] #客队近期战绩负场次
     
-    #用的联赛主场战绩
-    dicData["iAwayRecentAwayWin"] = int(classIntegralData.integralDataList["全场"][6]["客"][1]) #客队近期战绩客场胜场次
-    dicData["iAwayRecentAwayDraws"] = int(classIntegralData.integralDataList["全场"][6]["客"][2]) #客队近期战绩客场平场次
-    dicData["iAwayRecentAwayLose"] = int(classIntegralData.integralDataList["全场"][6]["客"][2]) #客队近期战绩客场负场次
+        #用的联赛主场战绩
+        dicData["iAwayRecentAwayWin"] = int(classIntegralData.integralDataList["全场"][6]["客"][1]) #客队近期战绩客场胜场次
+        dicData["iAwayRecentAwayDraws"] = int(classIntegralData.integralDataList["全场"][6]["客"][2]) #客队近期战绩客场平场次
+        dicData["iAwayRecentAwayLose"] = int(classIntegralData.integralDataList["全场"][6]["客"][2]) #客队近期战绩客场负场次
     
     dicData["iVsRecHomeWin"] = int(classHistroyGameData.sWinCnt) # 对赛往绩主队胜场次
     dicData["iVsRecHomeDraws"] = int(classHistroyGameData.sDrawCnt) # 对赛往绩主队平场次
@@ -454,7 +455,10 @@ def encodeToCData(gameId,classIntegralData,classHistroyGameData,classInGameData1
 #var GoalCn = "平手,平/半,半球,半/一,一球,一/球半,球半,球半/两,两球,两/两球半,两球半,两球半/三,三球,三/三球半,三球半,三球半/四球,四球,四/四球半,四球半,四球半/五,五球,五/五球半,五球半,五球半/六,六球,六/六球半,六球半,六球半/七,七球,七/七球半,七球半,七球半/八,八球,八/八球半,八球半,八球半/九,九球,九/九球半,九球半,九球半/十,十球".split(",");
 #var GoalCn2 = ["0", "0/0.5", "0.5", "0.5/1", "1", "1/1.5", "1.5", "1.5/2", "2", "2/2.5", "2.5", "2.5/3", "3", "3/3.5", "3.5", "3.5/4", "4", "4/4.5", "4.5", "4.5/5", "5", "5/5.5", "5.5", "5.5/6", "6", "6/6.5", "6.5", "6.5/7", "7", "7/7.5", "7.5", "7.5/8", "8", "8/8.5", "8.5", "8.5/9", "9", "9/9.5", "9.5", "9.5/10", "10", "10/10.5", "10.5", "10.5/11", "11", "11/11.5", "11.5", "11.5/12", "12", "12/12.5", "12.5", "12.5/13", "13", "13/13.5", "13.5", "13.5/14", "14"];
 
-    dicHandicapMap = {  '*球半':'-1.5',
+    dicHandicapMap = {  '*两/两球半':'-2.25',
+                        '*两球':'-2.0',
+                        '*球半/两':'-1.75',
+                        '*球半':'-1.5',
                         '*一/球半':'-1.25',
                         '*一球':'-1.0',
                         '*半/一':'-0.75',
@@ -471,38 +475,41 @@ def encodeToCData(gameId,classIntegralData,classHistroyGameData,classInGameData1
                         '两球':'2.0',
                         '两/两球半':'2.25',
                         '两球半':'2.5'}
-    dicData["fInitialHandicapX"] =  float(dicHandicapMap[classIndexData.indexDataList[0]["澳门"][0][8]])
-    if dicData["fInitialHandicapX"] > 0:
-        dicData["fInitialHandicapOver"] = float(classIndexData.indexDataList[0]["澳门"][0][7])
-        dicData["fInitialHandicapUnder"] = float(classIndexData.indexDataList[0]["澳门"][0][9])
-    else:
-        dicData["fInitialHandicapOver"] = float(classIndexData.indexDataList[0]["澳门"][0][9])
-        dicData["fInitialHandicapUnder"] = float(classIndexData.indexDataList[0]["澳门"][0][7])
-    
-    dicData["fInstantHandicapX"] = float(dicHandicapMap[classIndexData.indexDataList[0]["澳门"][1][8]])
-    if dicData["fInstantHandicapX"] > 0:
-        dicData["fInstantHandicapOver"] = float(classIndexData.indexDataList[0]["澳门"][1][7])
-        dicData["fInstantHandicapUnder"] = float(classIndexData.indexDataList[0]["澳门"][1][9])
-    else:
-        dicData["fInstantHandicapOver"] = float(classIndexData.indexDataList[0]["澳门"][1][9])
-        dicData["fInstantHandicapUnder"] = float(classIndexData.indexDataList[0]["澳门"][1][7])
-    
+    if "澳门" in classIndexData.indexDataList[0].keys():
+        dicData["fInitialHandicapX"] =  float(dicHandicapMap[classIndexData.indexDataList[0]["澳门"][0][8]])
+        if dicData["fInitialHandicapX"] > 0:
+            dicData["fInitialHandicapOver"] = float(classIndexData.indexDataList[0]["澳门"][0][7])
+            dicData["fInitialHandicapUnder"] = float(classIndexData.indexDataList[0]["澳门"][0][9])
+        else:
+            dicData["fInitialHandicapOver"] = float(classIndexData.indexDataList[0]["澳门"][0][9])
+            dicData["fInitialHandicapUnder"] = float(classIndexData.indexDataList[0]["澳门"][0][7])
+        
+        dicData["fInstantHandicapX"] = float(dicHandicapMap[classIndexData.indexDataList[0]["澳门"][1][8]])
+        if dicData["fInstantHandicapX"] > 0:
+            dicData["fInstantHandicapOver"] = float(classIndexData.indexDataList[0]["澳门"][1][7])
+            dicData["fInstantHandicapUnder"] = float(classIndexData.indexDataList[0]["澳门"][1][9])
+        else:
+            dicData["fInstantHandicapOver"] = float(classIndexData.indexDataList[0]["澳门"][1][9])
+            dicData["fInstantHandicapUnder"] = float(classIndexData.indexDataList[0]["澳门"][1][7])
+        
     #stHandicapList  暂时不设置即时数据详细信息
-    dicData["fInitialHandicapX_crown"] = float(dicHandicapMap[classIndexData.indexDataList[1]["Crown"][0][8]])
-    if dicData["fInitialHandicapX_crown"] > 0:
-        dicData["fInitialHandicapOver_crown"] = float(classIndexData.indexDataList[1]["Crown"][0][7])
-        dicData["fInitialHandicapUnder_crown"] = float(classIndexData.indexDataList[1]["Crown"][0][9])
-    else:
-        dicData["fInitialHandicapOver_crown"] = float(classIndexData.indexDataList[1]["Crown"][0][9])
-        dicData["fInitialHandicapUnder_crown"] = float(classIndexData.indexDataList[1]["Crown"][0][7])
 
-    dicData["fInstantHandicapX_crown"] = float(dicHandicapMap[classIndexData.indexDataList[1]["Crown"][1][8]])
-    if dicData["fInstantHandicapX_crown"] > 0:
-        dicData["fInstantHandicapOver_crown"] = float(classIndexData.indexDataList[1]["Crown"][1][7])
-        dicData["fInstantHandicapUnder_crown"] = float(classIndexData.indexDataList[1]["Crown"][1][9])
-    else:
-        dicData["fInstantHandicapOver_crown"] = float(classIndexData.indexDataList[1]["Crown"][1][9])
-        dicData["fInstantHandicapUnder_crown"] = float(classIndexData.indexDataList[1]["Crown"][1][7])
+    if "Crown" in classIndexData.indexDataList[1].keys():
+        dicData["fInitialHandicapX_crown"] = float(dicHandicapMap[classIndexData.indexDataList[1]["Crown"][0][8]])
+        if dicData["fInitialHandicapX_crown"] > 0:
+            dicData["fInitialHandicapOver_crown"] = float(classIndexData.indexDataList[1]["Crown"][0][7])
+            dicData["fInitialHandicapUnder_crown"] = float(classIndexData.indexDataList[1]["Crown"][0][9])
+        else:
+            dicData["fInitialHandicapOver_crown"] = float(classIndexData.indexDataList[1]["Crown"][0][9])
+            dicData["fInitialHandicapUnder_crown"] = float(classIndexData.indexDataList[1]["Crown"][0][7])
+
+        dicData["fInstantHandicapX_crown"] = float(dicHandicapMap[classIndexData.indexDataList[1]["Crown"][1][8]])
+        if dicData["fInstantHandicapX_crown"] > 0:
+            dicData["fInstantHandicapOver_crown"] = float(classIndexData.indexDataList[1]["Crown"][1][7])
+            dicData["fInstantHandicapUnder_crown"] = float(classIndexData.indexDataList[1]["Crown"][1][9])
+        else:
+            dicData["fInstantHandicapOver_crown"] = float(classIndexData.indexDataList[1]["Crown"][1][9])
+            dicData["fInstantHandicapUnder_crown"] = float(classIndexData.indexDataList[1]["Crown"][1][7])
 
     #print(dicData)
     return dicData

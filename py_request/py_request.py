@@ -37,13 +37,11 @@ def requstUrl(requestId, outPathFile):
     if outPathFile is not None:
         allGameData = writeExcelData(outPathFile, classHistroyGameData, classInGameData1, classInGameData2, classIndexData, classIntegralData)
         logI("write excel success")
+        return allGameData
     else:
         gameDicData = {}
         gameDicData = encodeToCData(requestId,classIntegralData,classHistroyGameData,classInGameData1,classInGameData2,classIndexData)
         return gameDicData
-        pass
-
-    return allGameData
 
 def decodeUrl(sUrl):
     sUrls = sUrl.split("sb")
@@ -186,12 +184,13 @@ if __name__ == "__main__":
         gameData = toGetRquestNoExcel(url)
         allGameData.append(gameData)
     
-    print(allGameData)
+    for i in range(len(allGameData)):
+        print(allGameData[i])
     '''
-        
-    
+
+      
     url = "http://zq.win007.com/analysis/1879934sb.htm"
-    url1 = "http://zq.win007.com/analysis/1872471sb.htm"
+    url1 = "http://zq.win007.com/analysis/1925774sb.htm"  #这场报错很多 list index out of rangesAwayGroun = '帕尔马'
     #url = "http://zq.win007.com/analysis/1783594sb.htm"# 澳门无数据，无法解析的场次
     allGameData = []
     gameData = {}
@@ -206,7 +205,8 @@ if __name__ == "__main__":
     for i in range(len(allGameData)):
         print(allGameData[i])
         decodeGameData(allGameData[i])
-        
+    
+
     '''
     #toGetRquest("http://zq.win007.com/analysis/1743046sb.htm#porlet_0")
     sUrl = "http://zq.win007.com/analysis/1743046sb.htm#porlet_0"
